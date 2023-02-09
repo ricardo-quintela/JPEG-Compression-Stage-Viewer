@@ -1,0 +1,83 @@
+RELATORIO
+
+-> tamanho do ficheiro
+-> taxa de compressão
+-> perda de informação
+-> qualidade
+
+1 - 2 tabelas 
+tabela 1 = taxa de compressão (taxa baixa, media, alta)
+tabela 2 = qual a qualidade observada (taxa baixa, media, alta)
+
+-> impacto nas diferentes imagens (umas com mais transações, mudanças de cor abruptas, mais escuras, mais claras ....)
+
+2 - funcao enconder e decoder
+
+enconder
+param: nome do file (pode ser alterado ao longo das semanas)
+quantização -> fator de qualidade () -> próximas semanas, IGNORAR AGORA
+
+decoder 
+param: recebe o resultado do encoder
+
+USAR NAME SPACE DO PYTHON
+-> usar a função main mas no __main__ bla bla bla obvio
+
+3
+mapa de cores, vai ser visto nas T 
+matplotlib.pyplot
+img = plt.img.read(name.bmp)
+img.shape() -> linhas, colunas, canais(R;G;B)
+
+plt.imgshow(img)
+%matplotlib.imgshow(img)
+plt.axis("off")
+plt.title("bla bla")
+plt.figure() -> permite varias figuras
+plt.close('all') -> fecha todas as imagens
+
+img.shape()
+red = img[:,:,0]
+
+import matplotlib.colors
+
+a = clr.LinearSegmentedColormap.from_list(nome, [(0,0,0), (1,1,1)], 256) -> damos os extremos e ele faz a interpolação ex para cinzento damos preto e branco
+clr.LinearSegmentedColormap.from_list(nome, [(0,0,0), (1,0,0)], 256) -> para vermelho
+plt.imshow(img, colormap)
+
+import numpy
+
+
+imgReconstruida = np.zeros((nl, nc, nc))
+imgReconstruida[:,:,0] = Vermelho
+...
+
+4
+
+temos de alterar a dimensão para multipla de 32 e replicar a ultima coluna
+JPEG bom quando há transições suaves - se for constante melhor, daí a ultima coluna como escolha
+
+5
+
+usar a matriz do slides
+T[0,0] * R + T[0,1] * G + T[0,2] * B = Y
+a matriz inversa está tbm nos slides ou, melhor, calcular a inversa da usada originalmente -> Ti = np.linalg.inv(T)
+ao fazer a recuperação temos de transformar tudo em inteiros -> Rrec[R>255] = 255, Rrec[R<0] = 0 , Rrecuperado = np.round(Rrec).astype(up.uint8)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
