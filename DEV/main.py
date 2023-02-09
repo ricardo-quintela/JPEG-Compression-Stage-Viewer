@@ -1,12 +1,12 @@
-    """
-    'Trabalho Prático nº 1'
-    'Compressão de Imagem'
+"""
+'Trabalho Prático nº 1'
+'Compressão de Imagem'
 
-    Created by:
-        André Colaço
-        João Henriques
-        Ricardo Rosa    
-    """
+Created by:
+    André Filipe Costa Colaço - 2020220301 
+    João Rafael do Rosário Henriques - 2020216586
+    Ricardo Quintela Martins Santos Rosa - 2020220508
+"""
 
 
 def main():
