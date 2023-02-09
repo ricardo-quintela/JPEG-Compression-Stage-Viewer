@@ -16,13 +16,15 @@ Repositório para desenvolvimento e trabalho em grupo
 mult_tp1
 ├── ARCH
 ├── DEV
+│   └── test
+│   └── img
 ├── PM
 │   ├── docs
 │   └── group
 ├── PROC
-│   └── img
 ├── PROD
 ├── QA
+│   └── docs
 └── REQ
 ```
   
