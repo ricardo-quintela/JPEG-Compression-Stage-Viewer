@@ -1,4 +1,6 @@
-# Projeto 1 de Fundamentos de Inteligência Artificial
+# Trabalho prático 1 de Multimédia
+
+## Compressão de Imagem
 
 <p align='center'>
   <a href="https://www.python.org/downloads/">
@@ -13,7 +15,10 @@ Repositório para desenvolvimento e trabalho em grupo
 ```
 mult_tp1
 ├── ARCH
-├── DEV 
+├── DEV
+├── PM
+│   ├── docs
+│   └── group
 ├── PROC
 │   └── img
 ├── PROD
@@ -23,4 +28,7 @@ mult_tp1
   
 ## Requisitos
 
-[**Python 3.8**](https://www.python.org/downloads/) or above
+[**Python 3.8**](https://www.python.org/downloads/) ou superior
+
+Bibliotecas:  
+´python -m pip install -r requirements.txt´
