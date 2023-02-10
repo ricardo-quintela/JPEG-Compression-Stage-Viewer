@@ -9,6 +9,7 @@ import matplotlib.colors as clr
 # imgtools
 from imgtools import read_bmp
 from imgtools import create_colormap
+from imgtools import add_padding
 
 class TestImgToolsReader(unittest.TestCase):
     """Tests the imgtools reader package
@@ -17,7 +18,10 @@ class TestImgToolsReader(unittest.TestCase):
     def test_read_file(self):
         """Test if a bmp image can be read
         """
-        np.testing.assert_array_equal(read_bmp("test/test_img.bmp"), np.array([[[255,255,255]]], dtype=np.uint8))
+        np.testing.assert_array_equal(
+            read_bmp("test/test_img.bmp"),
+            np.array([[[255,255,255]]], dtype=np.uint8)
+        )
 
     def test_read_error(self):
         """Test if an error occurs when opening a file that doesn't exist
@@ -50,7 +54,7 @@ class TestImgToolsColor(unittest.TestCase):
             create_colormap(1, (1,1,1), "white"),
             None
         )
-    
+
     def test_colormap_invalid_color_type2(self):
         """Tests if passing an invalid second color returns None
         """
@@ -84,6 +88,27 @@ class TestImgToolsColor(unittest.TestCase):
         self.assertEqual(
             create_colormap((0,0,0), (1,1,1), "white", "test"),
             None
+        )
+
+class TestImgtoolsExtender(unittest.TestCase):
+    """Tests the imgtools extender module
+    """
+
+    def test_add_padding(self):
+        """Tests if an image can be extended keeping the color of the last
+        row in the extended area
+        """
+        np.testing.assert_array_equal(
+            add_padding(np.zeros((4,5,3), dtype=np.uint8), 32)[0],
+            np.zeros((32,32,3), dtype=np.uint8)
+        )
+
+    def test_add_padding_old_size(self):
+        """Tests if an image that has been extended returns the correct old size
+        """
+        self.assertTupleEqual(
+            add_padding(np.zeros((4,5,3), dtype=np.uint8), 32)[1:],
+            (4,5)
         )
 
 
