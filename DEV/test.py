@@ -19,6 +19,16 @@ class TestImgToolsReader(unittest.TestCase):
         """
         np.testing.assert_array_equal(read_bmp("test/test_img.bmp"), np.array([[[255,255,255]]], dtype=np.uint8))
 
+    def test_read_error(self):
+        """Test if an error occurs when opening a file that doesn't exist
+        """
+        self.assertEqual(read_bmp("test/test_img_none.bmp"), None)
+
+    def test_read_no_bmp(self):
+        """Test if an error occurs when opening a file that
+        isn't in a bmp format
+        """
+        self.assertEqual(read_bmp("test/test_img_none.png"), None)
 
 class TestImgToolsColor(unittest.TestCase):
     """Tests the imgtools color module
