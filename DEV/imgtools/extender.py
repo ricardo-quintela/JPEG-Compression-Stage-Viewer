@@ -1,8 +1,10 @@
 """Contém funções para estender e cortar imagens
 """
+from typing import Tuple
+
 from numpy import ndarray, newaxis, vstack, hstack
 
-def add_padding(img: ndarray, min_size: int):
+def add_padding(img: ndarray, min_size: int) -> Tuple[ndarray, int, int]:
     """Adiciona preenchimento à imagem para complementar a falta de linhas/colunas
     para ajudar o codec JPEG na compressão
 
@@ -44,3 +46,18 @@ def add_padding(img: ndarray, min_size: int):
     img_padded = hstack([img_row_padded, rep_column])
 
     return img_padded, num_rows, num_cols
+
+
+def restore_padding(img: ndarray, width: int, height: int) -> ndarray:
+    """Restora a imagem original removendo o preenchimento adicionado
+    na altura da compressão
+
+    Args:
+        img (ndarray): a matriz da imagem
+        width (int): a largura da imagem original
+        height (int): a altura da imagem original
+
+    Returns:
+        ndarray: a matriz da imagem restaurada
+    """
+    return img[:width, :height]

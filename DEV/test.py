@@ -9,7 +9,7 @@ import matplotlib.colors as clr
 # imgtools
 from imgtools import read_bmp
 from imgtools import create_colormap
-from imgtools import add_padding
+from imgtools import add_padding, restore_padding
 
 class TestImgToolsReader(unittest.TestCase):
     """Testa o pacote do leitor de imgtools
@@ -109,6 +109,15 @@ class TestImgtoolsExtender(unittest.TestCase):
         self.assertTupleEqual(
             add_padding(np.zeros((4,5,3), dtype=np.uint8), 32)[1:],
             (4,5)
+        )
+
+    def test_restore_padding(self):
+        """Testa se uma imagem que foi previamente estendida é restaurada corretamente
+        para o tamanho original
+        """
+        np.testing.assert_array_equal(
+            restore_padding(np.zeros((32,32,3), dtype=np.uint8), 4, 5),
+            np.zeros((4,5,3), dtype=np.uint8)
         )
 
 

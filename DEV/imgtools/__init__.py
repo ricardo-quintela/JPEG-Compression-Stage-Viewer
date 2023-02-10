@@ -8,4 +8,4 @@ from .reader import read_bmp
 from .color import create_colormap
 
 # extender
-from .extender import add_padding
+from .extender import add_padding, restore_padding

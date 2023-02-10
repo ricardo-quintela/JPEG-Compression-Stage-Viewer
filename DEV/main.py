@@ -8,12 +8,9 @@ Criado por:
     Ricardo Quintela Martins Santos Rosa - 2020220508
 """
 
-from codec import encode, decode
-
 
 def main():
-    img, num_lines, num_col = encode('./img/barn_mountains.bmp')
-    decode(img, num_lines, num_col)
+    pass
 
 
 if __name__ == "__main__":
