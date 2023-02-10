@@ -8,9 +8,11 @@ Created by:
     Ricardo Quintela Martins Santos Rosa - 2020220508
 """
 
+from codec import encode
+
 
 def main():
-    pass
+    encode('./img/barn_mountains.bmp')
 
 
 
