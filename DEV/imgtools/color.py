@@ -41,14 +41,15 @@ def create_colormap(
         return
 
     # first color contains invalid values
-    if not (0 <= first_color[0] <= 1 or 0 <= first_color[1] <= 1 or 0 <= first_color[2] <= 1):
+    if not 0 <= first_color[0] <= 1 or not 0 <= first_color[1] <= 1 or not 0 <= first_color[2] <= 1:
         print("Color values must be mapped from the range [0,1]")
         return
 
     # second color contains invalid values
-    if not (0 <= second_color[0] <= 1 or 0 <= second_color[1] <= 1 or 0 <= second_color[2] <= 1):
+    if not 0 <= second_color[0] <= 1 or not 0 <= second_color[1] <= 1 or not 0 <= second_color[2] <= 1:
         print("Color values must be mapped from the range [0,1]")
         return
+
 
     return cmap
 
