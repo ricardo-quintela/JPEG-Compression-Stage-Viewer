@@ -8,12 +8,12 @@ Created by:
     Ricardo Quintela Martins Santos Rosa - 2020220508
 """
 
-from codec import encode
+from codec import encode, decode
 
 
 def main():
-    encode('./img/barn_mountains.bmp')
-
+    img, num_lines, num_col = encode('./img/barn_mountains.bmp')
+    decode(img, num_lines, num_col)
 
 
 if __name__ == "__main__":
