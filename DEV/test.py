@@ -8,7 +8,7 @@ import matplotlib.colors as clr
 
 # imgtools
 from imgtools import read_bmp
-from imgtools import create_colormap
+from imgtools import create_colormap, separate_channels
 from imgtools import add_padding, restore_padding
 
 class TestImgToolsReader(unittest.TestCase):
@@ -89,6 +89,35 @@ class TestImgToolsColor(unittest.TestCase):
             create_colormap((0,0,0), (1,1,1), "white", "test"),
             None
         )
+
+
+    def test_separate_channels(self):
+        """Testa se uma imagem fornecida é separada nos 3 canais
+        de RGB que a compõem
+        """
+        np.testing.assert_array_equal(
+            separate_channels(np.ones((1,1,3), dtype=np.uint8)),
+            (np.array([[1]]), np.array([[1]]), np.array([[1]]))
+        )
+
+    def test_separate_channels_wrong_format(self):
+        """Testa se é retornado None através da imagem de
+        formato errado fornecida
+        """
+        self.assertEqual(
+            separate_channels(np.ones((1,1), dtype=np.uint8)),
+            None
+        )
+
+    def test_separate_channels_wrong_channels(self):
+        """Testa se é retornado None através da imagem com menos canais
+        fornecida
+        """
+        self.assertEqual(
+            separate_channels(np.ones((1,1,2), dtype=np.uint8)),
+            None
+        )
+
 
 class TestImgtoolsExtender(unittest.TestCase):
     """Testa o módulo de extensor de imgtools

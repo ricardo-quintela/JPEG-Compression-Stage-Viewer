@@ -5,6 +5,7 @@ e mapas de cor
 from typing import Tuple
 
 from matplotlib.colors import LinearSegmentedColormap
+from numpy import ndarray
 
 def create_colormap(
         first_color: Tuple[float, float, float],
@@ -50,3 +51,26 @@ def create_colormap(
         return
 
     return cmap
+
+
+def separate_channels(img: ndarray) -> Tuple[ndarray, ndarray, ndarray]:
+    """Separa a imagem fornecida nos seus 3 canais de RGB
+
+    Args:
+        img (ndarray): a matriz da imagem
+
+    Returns:
+        Tuple[ndarray, ndarray, ndarray]: as matrizes dos canais RGB da imagem
+        ou None caso a imagem seja incompatível
+    """
+    # imagem incompatível
+    if len(img.shape) != 3:
+        print("Given image is incompatible")
+        return
+
+    # imagem sem 3 canais
+    if img.shape[2] != 3:
+        print("Given image doesn't have 3 channels")
+        return
+
+    return img[:,:,0], img[:,:,1], img[:,:,2]
