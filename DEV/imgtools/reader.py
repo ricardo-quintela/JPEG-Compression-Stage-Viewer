@@ -1,4 +1,4 @@
-"""Contains functions for image reading purposes
+"""Contém funções para fins de leitura de imagem
 """
 
 from os.path import isfile
@@ -8,14 +8,14 @@ from numpy import ndarray
 
 
 def read_bmp(path: str) -> ndarray:
-    """Reads a bmp file
+    """Lê um arquivo BMP
 
     Args:
-        path (str): the path to the bmp file
+        path (str): O caminho para o arquivo BMP
 
     Returns:
-        ndarray: an array with the image pixel values in RGB format
-            or None if the file is invalid or an error occurs
+        ndarray: Uma matriz com os valores de pixel de imagem em formato RGB
+            ou None se o arquivo for inválido ou ocorrer um erro
     """
 
     if not path.endswith(".bmp"):

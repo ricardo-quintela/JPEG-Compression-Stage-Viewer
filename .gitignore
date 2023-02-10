@@ -130,3 +130,6 @@ dmypy.json
 
 # shell script
 activate.sh
+
+# vscode
+.vscode

@@ -1,5 +1,5 @@
 def encode(path: str):
-    """Encodes the image file on the given path to a JPEG format
+    """Codifica o arquivo de imagem no caminho fornecido para um formato JPEG
 
     Args:
         path (str): the path to the file

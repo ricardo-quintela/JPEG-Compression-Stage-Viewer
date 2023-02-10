@@ -12,11 +12,11 @@ from imgtools import create_colormap
 from imgtools import add_padding
 
 class TestImgToolsReader(unittest.TestCase):
-    """Tests the imgtools reader package
+    """Testa o pacote do leitor de imgtools
     """
 
     def test_read_file(self):
-        """Test if a bmp image can be read
+        """Testa se uma imagem BMP pode ser lida
         """
         np.testing.assert_array_equal(
             read_bmp("test/test_img.bmp"),
@@ -24,23 +24,23 @@ class TestImgToolsReader(unittest.TestCase):
         )
 
     def test_read_error(self):
-        """Test if an error occurs when opening a file that doesn't exist
+        """Testa se ocorre um erro ao abrir um arquivo que não existe
         """
         self.assertEqual(read_bmp("test/test_img_none.bmp"), None)
 
     def test_read_no_bmp(self):
-        """Test if an error occurs when opening a file that
-        isn't in a bmp format
+        """Testa se ocorre um erro ao abrir um arquivo que
+        não está em um formato BMP
         """
         self.assertEqual(read_bmp("test/test_img_none.png"), None)
 
 class TestImgToolsColor(unittest.TestCase):
-    """Tests the imgtools color module
+    """Testa o módulo de cor de imgtools
     """
 
     def test_create_colormap(self):
-        """Tests if a user can create a colormap
-        with correct parameters
+        """Testa se um usuário pode criar um color
+        com parâmetros corretos
         """
         self.assertEqual(
             create_colormap((0,0,0), (1,1,1), "white"),
@@ -48,7 +48,7 @@ class TestImgToolsColor(unittest.TestCase):
         )
 
     def test_colormap_invalid_color_type1(self):
-        """Tests if passing an invalid first color returns None
+        """Testa se passar uma primeira cor inválida retorna None
         """
         self.assertEqual(
             create_colormap(1, (1,1,1), "white"),
@@ -56,7 +56,7 @@ class TestImgToolsColor(unittest.TestCase):
         )
 
     def test_colormap_invalid_color_type2(self):
-        """Tests if passing an invalid second color returns None
+        """Testa se passar uma segunda cor inválida retorna None
         """
         self.assertEqual(
             create_colormap((0,0,0), 0, "white"),
@@ -64,8 +64,8 @@ class TestImgToolsColor(unittest.TestCase):
         )
 
     def test_colormap_invalid_color_range1(self):
-        """Tests if passing a first color outside of the
-        [0,1] range returns None
+        """Testa se passar uma primeira cor fora do intervalo
+        [0,1] retorna None
         """
         self.assertEqual(
             create_colormap((255,255,255), (1,1,1), "white"),
@@ -73,8 +73,8 @@ class TestImgToolsColor(unittest.TestCase):
         )
 
     def test_colormap_invalid_color_range2(self):
-        """Tests if passing a second color outside of the
-        [0,1] range returns None
+        """Testa se passar uma segunda cor fora do
+        intervalo [0,1] retorna None
         """
         self.assertEqual(
             create_colormap((0,0,0), (255,255,255), "white"),
@@ -82,8 +82,8 @@ class TestImgToolsColor(unittest.TestCase):
         )
 
     def test_colormap_invalid_rgb_quantization(self):
-        """Tests if passing an invalid rgb quantization type
-        returns None
+        """Testa se passar um tipo de quantização RGB inválido
+        retorna None
         """
         self.assertEqual(
             create_colormap((0,0,0), (1,1,1), "white", "test"),
@@ -91,12 +91,12 @@ class TestImgToolsColor(unittest.TestCase):
         )
 
 class TestImgtoolsExtender(unittest.TestCase):
-    """Tests the imgtools extender module
+    """Testa o módulo de extensor de imgtools
     """
 
     def test_add_padding(self):
-        """Tests if an image can be extended keeping the color of the last
-        row in the extended area
+        """Testa se uma imagem pode ser estendida mantendo a cor do último
+        Linha na área estendida
         """
         np.testing.assert_array_equal(
             add_padding(np.zeros((4,5,3), dtype=np.uint8), 32)[0],
@@ -104,7 +104,7 @@ class TestImgtoolsExtender(unittest.TestCase):
         )
 
     def test_add_padding_old_size(self):
-        """Tests if an image that has been extended returns the correct old size
+        """Testa se uma imagem que foi estendida retorna o tamanho antigo correto
         """
         self.assertTupleEqual(
             add_padding(np.zeros((4,5,3), dtype=np.uint8), 32)[1:],

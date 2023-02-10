@@ -1,5 +1,5 @@
-"""Contains functions related to color manipulation
-and colormaps
+"""Contém funções relacionadas à manipulação de cores
+e mapas de cor
 """
 
 from typing import Tuple
@@ -13,17 +13,17 @@ def create_colormap(
         rgb_quantization: int = 256,
     ) -> LinearSegmentedColormap:
 
-    """Creates a linear segment colormap with the given RGB color values\n
-    the colormap will be named with the given name
+    """Cria um colorido de segmento linear com os valores de cores RGB fornecidos\n
+    o mapa de cor será nomeado com o nome dado
 
     Args:
-        first_color (Tuple[float, float, float]): the first color
-        second_color (Tuple[float, float, float]): the final color
-        name (str): the name of the colormap
-        rgb_quantization (int, optional): the RGB quantization levels. Defaults to 256.
+        first_color (Tuple[float, float, float]): a primeira cor
+        second_color (Tuple[float, float, float]): a cor final
+        name (str): o nome do colorido
+        rgb_quantization (int, optional): os níveis de quantização de RGB. Default a 256.
 
     Returns:
-        LinearSegmentedColormap: A LinearSegmentedColormap object or None if an error occurs
+        LinearSegmentedColormap: Um objeto LinearSegmentedColormap ou None se ocorrer um erro
     """
 
     # try to create a colormap

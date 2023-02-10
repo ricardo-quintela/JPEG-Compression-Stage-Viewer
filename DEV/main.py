@@ -2,7 +2,7 @@
 'Trabalho Prático nº 1'
 'Compressão de Imagem'
 
-Created by:
+Criado por:
     André Filipe Costa Colaço - 2020220301 
     João Rafael do Rosário Henriques - 2020216586
     Ricardo Quintela Martins Santos Rosa - 2020220508

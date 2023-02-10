@@ -1,18 +1,18 @@
-"""Contains functions to extend and cut images
+"""Contém funções para estender e cortar imagens
 """
 from numpy import ndarray, newaxis, vstack, hstack
 
 def add_padding(img: ndarray, min_size: int):
-    """Adds padding to the image to complement the lack of rows/columns
-    to aid the JPEG codec in compression
+    """Adiciona preenchimento à imagem para complementar a falta de linhas/colunas
+    para ajudar o codec JPEG na compressão
 
 
     Args:
-        img (ndarray): the image array
-        min_size (int): the minimum size of rows/cols required to complete
+        img (ndarray): a matriz da imagem
+        min_size (int): o tamanho mínimo de linhas/colunas necessários para concluir
 
     Returns:
-        Tuple[ndarray, int, int]: the extended image and the old row and column number
+        Tuple[ndarray, int, int]: a imagem estendida e a linha antiga e o número da coluna
     """
 
     # unpack the image rows and cols

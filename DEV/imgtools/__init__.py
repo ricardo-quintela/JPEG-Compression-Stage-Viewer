@@ -1,4 +1,4 @@
-"""Contains tools for working with images
+"""Contém ferramentas para trabalhar com imagens
 """
 
 # reader
