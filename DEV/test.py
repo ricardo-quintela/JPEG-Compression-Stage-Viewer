@@ -10,6 +10,7 @@ import matplotlib.colors as clr
 from imgtools import read_bmp
 from imgtools import create_colormap, separate_channels
 from imgtools import add_padding, restore_padding
+from imgtools import converter_to_rgb, converter_to_ycbcr
 
 class TestImgToolsReader(unittest.TestCase):
     """Testa o pacote do leitor de imgtools
@@ -149,6 +150,43 @@ class TestImgtoolsExtender(unittest.TestCase):
             np.zeros((4,5,3), dtype=np.uint8)
         )
 
+
+class TestImgtoolsConverter(unittest.TestCase):
+    """Testa o módulo converter do package imgtools
+    """
+
+    def test_convert_to_ycbcr(self):
+        """Testa se uma imagem no modelo de cor RGB é corretamente
+        convertida para o modelo YCbCr
+        """
+
+        np.testing.assert_array_almost_equal(
+            converter_to_ycbcr(np.ones((1,1,3), dtype=np.uint8)),
+            (
+                np.array([[1.0]], dtype=np.float64),
+                np.array([[128.0]], dtype=np.float64),
+                np.array([[128.0]], dtype=np.float64)
+            )
+        )
+
+    def test_convert_to_rgb(self):
+        """Testa se as componentes de uma imagem
+        no modelo de cor YCbCr são corretamente
+        convertidas para o modelo RGB
+        """
+
+        np.testing.assert_array_equal(
+            converter_to_rgb(
+                np.array([[1.0]], dtype=np.float64),
+                np.array([[128.0]], dtype=np.float64),
+                np.array([[128.0]], dtype=np.float64)
+            ),
+            (
+                np.array([[1]], dtype=np.uint8),
+                np.array([[1]], dtype=np.uint8),
+                np.array([[1]], dtype=np.uint8)
+            )
+        )
 
 if __name__ == "__main__":
     unittest.main()
