@@ -5,7 +5,7 @@ e mapas de cor
 from typing import Tuple
 
 from matplotlib.colors import LinearSegmentedColormap
-from numpy import ndarray
+from numpy import ndarray, zeros, uint8
 
 def create_colormap(
         first_color: Tuple[float, float, float],
@@ -55,13 +55,13 @@ def create_colormap(
 
 
 def separate_channels(img: ndarray) -> Tuple[ndarray, ndarray, ndarray]:
-    """Separa a imagem fornecida nos seus 3 canais de RGB
+    """Separa a imagem fornecida nos seus 3 canais RGB ou YCbCr
 
     Args:
         img (ndarray): a matriz da imagem
 
     Returns:
-        Tuple[ndarray, ndarray, ndarray]: as matrizes dos canais RGB da imagem
+        Tuple[ndarray, ndarray, ndarray]: as matrizes dos canais RGB ou YCbCr da imagem
         ou None caso a imagem seja incompatível
     """
     # imagem incompatível
@@ -75,3 +75,34 @@ def separate_channels(img: ndarray) -> Tuple[ndarray, ndarray, ndarray]:
         return
 
     return img[:,:,0], img[:,:,1], img[:,:,2]
+
+
+def join_channels(ch1: ndarray, ch2: ndarray, ch3: ndarray) -> ndarray:
+    """Reconstroi uma imagem com os canais RGB ou YcbCr fornecidos
+
+    Args:
+        ch1 (ndarray): o primeiro canal
+        ch2 (ndarray): o segundo canal
+        ch3 (ndarray): o terceiro canal
+
+    Returns:
+        ndarray: a imagem reconstruida com os canais RGB ou YCbCr
+    """
+
+    # canais da imagem não são iguais
+    if ch1.shape * 3 != ch1.shape + ch2.shape + ch3.shape:
+        print("Given channels have different shapes")
+        return
+
+    # canais da imagem estão no formato errado
+    if ch1.shape != (1,1):
+        print("Given channel is in the wrong format")
+        return
+
+    img = zeros((1,1,3), dtype=uint8)
+
+    img[:,:,0] = ch1
+    img[:,:,1] = ch2
+    img[:,:,2] = ch3
+
+    return img

@@ -8,7 +8,7 @@ import matplotlib.colors as clr
 
 # imgtools
 from imgtools import read_bmp
-from imgtools import create_colormap, separate_channels
+from imgtools import create_colormap, separate_channels, join_channels
 from imgtools import add_padding, restore_padding
 from imgtools import converter_to_rgb, converter_to_ycbcr
 
@@ -119,6 +119,44 @@ class TestImgToolsColor(unittest.TestCase):
             None
         )
 
+    def test_join_channels(self):
+        """Testa se os 3 canais RGB de uma imagem podem ser unidos
+        para reconstruir a imagem original
+        """
+        np.testing.assert_array_equal(
+            join_channels(
+                np.array([[255]], dtype=np.uint8),
+                np.array([[255]], dtype=np.uint8),
+                np.array([[255]], dtype=np.uint8),
+            ),
+            np.array([[[255,255,255]]], dtype=np.uint8)
+        )
+
+    def test_join_channels_not_equal(self):
+        """Testa se fornecer 3 canais com formatos diferentes
+        retorna None
+        """
+        self.assertEqual(
+            join_channels(
+                np.array([[255]], dtype=np.uint8),
+                np.array([[255,255,255]], dtype=np.uint8),
+                np.array([[[255]]], dtype=np.uint8),
+            ),
+            None
+        )
+
+    def test_join_channels_wrong_shape(self):
+        """Testa se fornecer 3 canais com o formato errado retorna
+        None
+        """
+        self.assertEqual(
+            join_channels(
+                np.array([[255,255,255]], dtype=np.uint8),
+                np.array([[255,255,255]], dtype=np.uint8),
+                np.array([[255,255,255]], dtype=np.uint8),
+            ),
+            None
+        )
 
 class TestImgtoolsExtender(unittest.TestCase):
     """Testa o módulo de extensor de imgtools

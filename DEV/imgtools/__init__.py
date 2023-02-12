@@ -5,7 +5,7 @@
 from .reader import read_bmp
 
 # color
-from .color import create_colormap, separate_channels
+from .color import create_colormap, separate_channels, join_channels
 
 # extender
 from .extender import add_padding, restore_padding
