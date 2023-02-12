@@ -75,6 +75,10 @@ def converter_to_rgb(Y: ndarray, Cb: ndarray, Cr: ndarray) -> Tuple[ndarray, nda
     B = T_inverse[2,0] * Y + T_inverse[2,1] * (Cb - 128) + T_inverse[2,2] * (Cr - 128)
 
     # make sure everything is in the [0,255] range
+    R *= 255
+    G *= 255
+    B *= 255
+
     R[R > 255] = 255
     R[R < 0] = 0
     G[G > 255] = 255

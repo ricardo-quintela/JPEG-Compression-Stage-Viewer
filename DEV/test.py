@@ -182,9 +182,9 @@ class TestImgtoolsConverter(unittest.TestCase):
                 np.array([[128.0]], dtype=np.float64)
             ),
             (
-                np.array([[1]], dtype=np.uint8),
-                np.array([[1]], dtype=np.uint8),
-                np.array([[1]], dtype=np.uint8)
+                np.array([[255]], dtype=np.uint8),
+                np.array([[255]], dtype=np.uint8),
+                np.array([[255]], dtype=np.uint8)
             )
         )
 
