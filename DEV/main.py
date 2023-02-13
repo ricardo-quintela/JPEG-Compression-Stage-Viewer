@@ -25,23 +25,30 @@ def main():
 
     Argumentos:
 
-    -i -> Escolher a imagem
+    -i PATH -> Escolher a imagem
 
         -m {r g b r g b} -> Escolher um colormap para usar na visualização da imagem
             -r -> Escolher o formato RGB
             -y -> Escolher o formato YCbCr
             -c {canal} -> Selecionar um canal: int [1,3]
 
-
+    -a PATH -> Ficheiro de config que tem comandos para diferentes plots
     """
 
     parser = argparse.ArgumentParser()
 
     # selecionar imagem
-    image_group = parser.add_mutually_exclusive_group(required=True)
-    image_group.add_argument(
+    action_group = parser.add_mutually_exclusive_group(required=True)
+    action_group.add_argument(
         "-i", "--image",
         help="show the image on the given path",
+        type=str,
+        metavar="PATH"
+    )
+
+    action_group.add_argument(
+        "-a", "--config",
+        help="use a configuration file with commands to run multiple plot instances",
         type=str,
         metavar="PATH"
     )
@@ -70,7 +77,7 @@ def main():
     )
     color_model_group.add_argument(
         "-r", "--rgb",
-        help="convert the image channels to the RGB color model",
+        help="convert the image channels to the RGB color model (default)",
         action="store_true"
     )
 
@@ -82,6 +89,7 @@ def main():
     )
 
     args = parser.parse_args()
+
 
     #  verificar se argumentos são usados com seus parents corretos
     if args.image and args.channel and not args.colormap:

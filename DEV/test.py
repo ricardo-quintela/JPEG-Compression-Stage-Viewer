@@ -12,6 +12,9 @@ from imgtools import create_colormap, separate_channels, join_channels
 from imgtools import add_padding, restore_padding
 from imgtools import converter_to_rgb, converter_to_ycbcr
 
+# file_worker
+from file_worker import read_config
+
 class TestImgToolsReader(unittest.TestCase):
     """Testa o pacote do leitor de imgtools
     """
@@ -224,6 +227,45 @@ class TestImgtoolsConverter(unittest.TestCase):
                 np.array([[255]], dtype=np.uint8),
                 np.array([[255]], dtype=np.uint8)
             )
+        )
+
+class TestFileworkerReader(unittest.TestCase):
+    """Testa o módulo reader do package file_worker
+    """
+
+    def test_read_config(self):
+        """Testa se é possível ler um ficheiro de configuração
+        """
+        self.assertEqual(
+            read_config("test/test_config.cfg"),
+            "Test config"
+        )
+
+    def test_read_config_path_dir(self):
+        """Testa se fornecendo um diretório como caminho
+        a função retorna None
+        """
+        self.assertEqual(
+            read_config("test/"),
+            None
+        )
+
+    def test_read_config_bad_extension(self):
+        """Testa se fornecendo um ficheiro que não está no formato
+        cfg a função retorna None
+        """
+        self.assertEqual(
+            read_config("test/test_config.txt"),
+            None
+        )
+
+    def test_read_config_file_not_found(self):
+        """Testa se fornecendo um ficheiro que não está no formato
+        cfg a função retorna None
+        """
+        self.assertEqual(
+            read_config("test/test_config2.cfg"),
+            None
         )
 
 if __name__ == "__main__":
