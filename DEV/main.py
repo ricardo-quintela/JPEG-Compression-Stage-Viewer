@@ -16,6 +16,7 @@ from imgtools import read_bmp
 from imgtools import create_colormap, separate_channels
 from imgtools import converter_to_ycbcr
 from imgtools import add_padding
+from codec import encode
 
 
 
@@ -164,6 +165,9 @@ def main():
         # mostrar a imagem sem colormap
         else:
             show_img(image)
+
+    if args.config:
+        encode(args.config)
 
 
 if __name__ == "__main__":
