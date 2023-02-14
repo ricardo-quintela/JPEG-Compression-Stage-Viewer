@@ -56,3 +56,5 @@ def encode(path: str):
     show_img(image_ycc, fig_numb=9, name="Imagem no modelo YCbCr")
 
     show()
+
+    return image_ycc, image.shape[0], image.shape[1]

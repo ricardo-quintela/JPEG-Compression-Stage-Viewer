@@ -4,7 +4,7 @@ e vice-versa
 
 from typing import Tuple
 
-from numpy import ndarray, array, linalg, round as npround, uint8
+from numpy import ndarray, array, linalg, round as npround, uint8, float32
 
 def converter_to_ycbcr(img: ndarray) -> Tuple[ndarray, ndarray, ndarray]:
     """Converte uma imagem no modelo RGB para o modelo YCbCr
@@ -69,15 +69,20 @@ def converter_to_rgb(Y: ndarray, Cb: ndarray, Cr: ndarray) -> Tuple[ndarray, nda
     # calculate inverse matrix from T
     T_inverse = linalg.inv(T)
 
+    Y  = Y.astype(float32)
+    Cb = Cb.astype(float32)
+    Cr = Cr.astype(float32)
+
     # calculate the different channels R,G,B
-    R = T_inverse[0,0] * Y + T_inverse[0,1] * (Cb - 128) + T_inverse[0,2] * (Cr - 128)
-    G = T_inverse[1,0] * Y + T_inverse[1,1] * (Cb - 128) + T_inverse[1,2] * (Cr - 128)
-    B = T_inverse[2,0] * Y + T_inverse[2,1] * (Cb - 128) + T_inverse[2,2] * (Cr - 128)
+    R = T_inverse[0,0]*Y + T_inverse[0,1]*(Cb-128) + T_inverse[0,2]*(Cr-128)
+    G = T_inverse[1,0]*Y + T_inverse[1,1]*(Cb-128) + T_inverse[1,2]*(Cr-128)
+    B = T_inverse[2,0]*Y + T_inverse[2,1]*(Cb-128) + T_inverse[2,2]*(Cr-128)
+
 
     # make sure everything is in the [0,255] range
-    R *= 255
-    G *= 255
-    B *= 255
+    # R *= 255
+    # G *= 255
+    # B *= 255
 
     R[R > 255] = 255
     R[R < 0] = 0

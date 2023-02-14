@@ -16,7 +16,7 @@ from imgtools import read_bmp
 from imgtools import create_colormap, separate_channels
 from imgtools import converter_to_ycbcr
 from imgtools import add_padding
-from codec import encode
+from codec import encode, decode
 
 
 
@@ -167,7 +167,8 @@ def main():
             show_img(image)
 
     if args.config:
-        encode(args.config)
+        img, width, height = encode(args.config)
+        decode(img, width, height)
 
 
 if __name__ == "__main__":
