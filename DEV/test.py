@@ -14,6 +14,8 @@ from imgtools import converter_to_rgb, converter_to_ycbcr
 
 # file_worker
 from file_worker import read_config
+from file_worker import Token
+from file_worker import lex
 
 class TestImgToolsReader(unittest.TestCase):
     """Testa o pacote do leitor de imgtools
@@ -264,9 +266,60 @@ class TestFileworkerReader(unittest.TestCase):
         cfg a função retorna None
         """
         self.assertEqual(
-            read_config("test/test_config2.cfg"),
+            read_config("test/test_configNOT.cfg"),
             None
         )
+
+
+
+class TestFileworkerToken(unittest.TestCase):
+    """Testa o modulo token do package file_worker
+    """
+
+    def test_sort_tokens(self):
+        """Testa se um array de tokens pode ser
+        ordenado com base na sua posição
+        """
+        tokens = [
+            Token("TEST4", 4),
+            Token("TEST2", 2),
+            Token("TEST3", 3),
+            Token("TEST1", 1)
+        ]
+        tokens.sort()
+
+        self.assertListEqual(
+            tokens,
+            [
+                Token("TEST1", 1),
+                Token("TEST2", 2),
+                Token("TEST3", 3),
+                Token("TEST4", 4)
+            ]
+        )
+
+class TestFileworkerFileParser(unittest.TestCase):
+    """Testa o modulo file parser do package file worker
+    """
+
+    def test_lex(self):
+        self.assertListEqual(
+            lex(read_config("test/test_config2.cfg")),
+            [
+                "PLOT -> test",
+                "IMAGE -> path",
+                "COLORMAP -> (0.0, 0.0, 0.0, 0.1, 0.2, 0.3)",
+                "CHANNEL -> 2",
+                "YCC -> None",
+                "IMAGE -> path",
+                "COLORMAP -> (0.0, 0.0, 0.0, 1.0, 1.0, 1.0)",
+                "CHANNEL -> 3",
+                "RGB -> None",
+                "END -> None",
+            ]
+        )
+
+
 
 if __name__ == "__main__":
     unittest.main()
