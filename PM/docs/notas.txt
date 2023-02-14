@@ -68,9 +68,7 @@ ao fazer a recuperação temos de transformar tudo em inteiros -> Rrec[R>255] = 
 
 
 
-
-
-
+Estudar a função resize ou precise do cv2
 
 
 

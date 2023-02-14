@@ -1,4 +1,4 @@
-from matplotlib.pyplot import show
+from matplotlib.pyplot import show, close
 from numpy import zeros, float64, uint8, round as npround
 
 from imgtools import read_bmp
@@ -14,6 +14,8 @@ def encode(path: str):
     Args:
         path (str): the path to the file
     """
+    close("all")
+
 
     image = read_bmp(path)
 

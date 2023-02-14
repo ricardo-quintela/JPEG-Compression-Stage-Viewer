@@ -1,4 +1,4 @@
-from matplotlib.pyplot import show
+from matplotlib.pyplot import show, close
 from numpy import zeros, uint8
 
 from imgtools import converter_to_rgb
@@ -15,6 +15,8 @@ def decode(data: bytearray, width: int, height: int):
         width (int): a largura da imagem original
         height (int): a altura da imagem original
     """
+
+    close("all")
 
     image_y = data[:,:,0]
     image_cb = data[:,:,1]
