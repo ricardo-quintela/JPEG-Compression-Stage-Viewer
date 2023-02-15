@@ -9,6 +9,7 @@ from matplotlib.pyplot import show
 
 from .stoken import Token
 from imgtools import read_bmp, separate_channels, show_img, converter_to_ycbcr, add_padding, create_colormap
+from codec import decode
 
 
 def lex(buffer: str) -> List[Token]:
@@ -33,7 +34,6 @@ def lex(buffer: str) -> List[Token]:
         buffer
     )
     channel_matches = finditer(r"-c [123]", buffer)
-    padding_matches = finditer(r"-p [1-9][0-9]*", buffer)
     ycc_matches = finditer(r"-y", buffer)
     rgb_matches = finditer(r"-r", buffer)
 
@@ -84,13 +84,6 @@ def lex(buffer: str) -> List[Token]:
             Token("CHANNEL", match.start(), value)
         )
 
-    # tokens PADDING
-    for match in padding_matches:
-        value = int(split(r" ", match.group())[1])
-
-        tokens.append(
-            Token("PADDING", match.start(), value)
-        )
 
     # tokens YCC
     for match in ycc_matches:
@@ -218,12 +211,15 @@ def semantic(buffer: List[Token]):
                     channel = command["CHANNEL"]
                 else:
                     colormap = None
-
-                if "PADDING" in command:
-                    image = add_padding(image, command["PADDING"])[0]
+                    
 
                 if "YCC" in command:
-                    image = converter_to_ycbcr(image)[channel-1]
+                    image, o_width, o_height = add_padding(image, 32)
+                    converted_image = converter_to_ycbcr(image)
+                    image = converted_image[channel-1]
+
+                    decoded_image = decode(converted_image, o_width, o_height)
+
 
                 if not "YCC" in command and "CHANNEL" in command:
                     image = separate_channels(image)[channel-1]
@@ -231,18 +227,8 @@ def semantic(buffer: List[Token]):
                 
                 show_img(image, colormap, block[0][0].value, i+1, (int(plot_size/2), int(plot_size/2), j+1))
 
+        
+    if decoded_image is not None:
+        show_img(decoded_image, name="Descodificada")
+
     show()
-
-
-            
-
-
-if __name__ == "__main__":
-
-    from file_reader import load_grammar, read_config
-
-    tk = lex(read_config("../ex_1_5_config.cfg"))
-
-    if synt(tk, load_grammar("../grammar.json")):
-        semantic(tk)
-

@@ -30,9 +30,6 @@
         ],
         [
             "COMMAND", "YCC"
-        ],
-        [
-            "COMMAND", "PADDING"
         ]
     ]
 }
