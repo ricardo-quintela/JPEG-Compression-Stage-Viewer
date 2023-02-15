@@ -5,7 +5,10 @@ ficheiro de configuração
 from typing import List
 from re import finditer, split, sub
 
-from .token import Token
+from matplotlib.pyplot import show
+
+from .stoken import Token
+from imgtools import read_bmp, separate_channels, show_img, converter_to_ycbcr, add_padding, create_colormap
 
 
 def lex(buffer: str) -> List[Token]:
@@ -22,7 +25,7 @@ def lex(buffer: str) -> List[Token]:
     number = r"([01]|0.[0-9]+|.[0-9]+)"
 
     # encontrar plots
-    plot_matches = finditer(r"plot [a-zA-Z0-9]+\n", buffer)
+    plot_matches = finditer(r"plot [a-zA-Z0-9_]+\n", buffer)
     end_matches = finditer(r"end\n", buffer)
     image_matches = finditer(r"-i \"([^\s]| )+\"|-i [^\s\"]+", buffer)
     colormap_matches = finditer(
@@ -173,26 +176,60 @@ def synt(buffer: List[Token], productions: dict) -> bool:
 
 def semantic(buffer: List[Token]):
 
-    commands = list()
+    blocks = list()
 
-    command_index = -1
+    block_index = 0
+    command_index = 0
     for token in buffer:
 
         if token == "PLOT":
-            commands.append([[token, 0]])
+            blocks.append([[token, 0]])
             continue
 
         if token != "END":
+            
             if token == "IMAGE":
-                commands[command_index][0][1] += 1
+                blocks[block_index].append({token.name: token.value})
+                blocks[block_index][0][1] += 1
+                command_index += 1
+                continue
 
-            commands[command_index].append(token)
+            blocks[block_index][command_index][token.name] = token.value
 
         else:
-            command_index += 1
+            block_index += 1
+            command_index = 0
 
-    
-    print(commands)
+    # interpretar comandos
+    for i, block in enumerate(blocks):
+
+        if block[0][0] == "PLOT":
+
+            plot_size = block[0][1]+block[0][1]%2
+
+            for j, command in enumerate(block[1:]):
+                image = read_bmp(command["IMAGE"])
+
+                if "COLORMAP" in command:
+                    colormap = create_colormap(command["COLORMAP"][0], command["COLORMAP"][1], "colormap")
+                    channel = command["CHANNEL"]
+                else:
+                    colormap = None
+
+                if "PADDING" in command:
+                    image = add_padding(image, command["PADDING"])[0]
+
+                if "YCC" in command:
+                    image = converter_to_ycbcr(image)[channel-1]
+
+                if not "YCC" in command and "CHANNEL" in command:
+                    image = separate_channels(image)[channel-1]
+
+                
+                show_img(image, colormap, block[0][0].value, i+1, (int(plot_size/2), int(plot_size/2), j+1))
+
+    show()
+
 
             
 
@@ -203,5 +240,6 @@ if __name__ == "__main__":
 
     tk = lex(read_config("../ex_1_5_config.cfg"))
 
-    print(synt(tk, load_grammar("../grammar.json")))
+    if synt(tk, load_grammar("../grammar.json")):
+        semantic(tk)
 

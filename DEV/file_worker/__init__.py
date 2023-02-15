@@ -3,10 +3,10 @@ de configuração
 """
 
 # file_parser
-from .file_reader import read_config
+from .file_reader import read_config, load_grammar
 
 # lex_analysis
-from .analysis import lex, synt
+from .analysis import lex, synt, semantic
 
 # token
-from .token import Token
+from .stoken import Token

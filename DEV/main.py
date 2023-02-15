@@ -18,6 +18,8 @@ from imgtools import converter_to_ycbcr
 from imgtools import add_padding
 from codec import encode, decode
 
+from file_worker import lex, synt, semantic, read_config, load_grammar
+
 
 
 def main():
@@ -121,7 +123,7 @@ def main():
             return
 
     # o utilizador escolhe ver a imagem
-    if args.image is not None:
+    if args.image:
 
         # ler a imagem
         image = read_bmp(args.image)
@@ -167,8 +169,15 @@ def main():
             show_img(image)
 
     if args.config:
-        img, width, height = encode(args.config)
-        decode(img, width, height)
+        grammar = load_grammar("grammar.json")
+        config = read_config(args.config)
+
+        tokens = lex(config)
+        if not synt(tokens, grammar):
+            return
+        
+        semantic(tokens)
+
 
 
 if __name__ == "__main__":
