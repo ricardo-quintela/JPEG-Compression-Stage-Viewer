@@ -1,8 +1,9 @@
-from numpy import zeros, uint8, ndarray
 from typing import Tuple
+from numpy import zeros, uint8, ndarray
 
 from imgtools import converter_to_rgb
 from imgtools import restore_padding
+from imgtools import join_channels
 
 
 def decode(data: Tuple[ndarray], width: int, height: int) -> ndarray:
@@ -18,18 +19,9 @@ def decode(data: Tuple[ndarray], width: int, height: int) -> ndarray:
         ndarray: a imagem descodificada
     """
 
-    image_y = data[0]
-    image_cb = data[1]
-    image_cr = data[2]
+    image_r, image_g, image_b = converter_to_rgb(data[0], data[1], data[2])
 
-    image_r, image_g, image_b = converter_to_rgb(image_y, image_cb, image_cr)
-
-    shape = (data[0].shape[0], data[0].shape[1], 3)
-
-    image_rgb_padded = zeros(shape, dtype=uint8)
-    image_rgb_padded[:,:,0] = image_r
-    image_rgb_padded[:,:,1] = image_g
-    image_rgb_padded[:,:,2] = image_b
+    image_rgb_padded = join_channels(image_r, image_g, image_b)
 
     image_rgb = restore_padding(image_rgb_padded, width, height)
 

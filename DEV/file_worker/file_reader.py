@@ -4,6 +4,7 @@ de configuração
 
 from os.path import isdir
 from json import loads
+from json.decoder import JSONDecodeError
 
 def read_config(path: str) -> str:
     """Lê um ficheiro de configuração
@@ -64,6 +65,10 @@ def load_grammar(path: str) -> dict:
         with open(path, "r", encoding="utf-8") as conf_file:
             return loads(conf_file.read())
 
+    except JSONDecodeError:
+        print("An erros has occured while loading the grammar")
+        return
+
     # ficheiro não existe
     except FileNotFoundError:
         print("Given file does not exist")
@@ -71,5 +76,5 @@ def load_grammar(path: str) -> dict:
 
     # ocorreu outro erro
     except IOError:
-        print("An error has occured while opening the file")
+        print("An error has occured while reading the grammar file")
         return

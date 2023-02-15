@@ -170,12 +170,17 @@ def main():
 
     if args.config:
         grammar = load_grammar("grammar.json")
+        if grammar is None:
+            return
+
         config = read_config(args.config)
+        if config is None:
+            return
 
         tokens = lex(config)
         if not synt(tokens, grammar):
             return
-        
+
         semantic(tokens)
 
 

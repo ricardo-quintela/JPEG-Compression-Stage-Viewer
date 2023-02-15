@@ -7,9 +7,15 @@ from re import finditer, split, sub
 
 from matplotlib.pyplot import show
 
-from .stoken import Token
-from imgtools import read_bmp, separate_channels, show_img, converter_to_ycbcr, add_padding, create_colormap
 from codec import decode
+from imgtools import read_bmp
+from imgtools import separate_channels
+from imgtools import show_img
+from imgtools import converter_to_ycbcr
+from imgtools import add_padding
+from imgtools import create_colormap
+
+from .stoken import Token
 
 
 def lex(buffer: str) -> List[Token]:
@@ -26,7 +32,7 @@ def lex(buffer: str) -> List[Token]:
     number = r"([01]|0.[0-9]+|.[0-9]+)"
 
     # encontrar plots
-    plot_matches = finditer(r"plot [a-zA-Z0-9_]+\n", buffer)
+    plot_matches = finditer(r"plot ([a-zA-Z0-9_]+|\"[a-zA-Z0-9_ ]+\")\n", buffer)
     end_matches = finditer(r"end\n", buffer)
     image_matches = finditer(r"-i \"([^\s]| )+\"|-i [^\s\"]+", buffer)
     colormap_matches = finditer(
@@ -42,7 +48,7 @@ def lex(buffer: str) -> List[Token]:
 
     # tokens PLOT
     for match in plot_matches:
-        value = split(r"\s", match.group())[1]
+        value = split(r"plot |\n", sub(r"\"", "", match.group()))[1]
 
         tokens.append(
             Token("PLOT", match.start(), value)
@@ -125,14 +131,14 @@ def synt(buffer: List[Token], productions: dict) -> bool:
         # stack temporária
         stack_ind = -1
         stack_comp = list()
-        
+
         # adicionar o token à stack
         stack.append(buffer[i].name)
         i -= 1
 
         # percorrer a stack atual e tentar reduzir as produçoes
         while stack_ind > -len(stack) - 1:
-            
+
             # preencher stack temporaria
             stack_comp.append(stack[stack_ind])
             stack_ind -= 1
@@ -159,9 +165,9 @@ def synt(buffer: List[Token], productions: dict) -> bool:
     # sucesso no parsing
     if stack == ["PROGRAM"]:
         return True
-    
+
     # falhou
-    print("ERRO: não foi possível fazer o parsing do ficheiro de configuração")
+    print("Unable to parse the configuration file")
     return False
 
 
@@ -183,7 +189,7 @@ def semantic(buffer: List[Token]):
             continue
 
         if token != "END":
-            
+
             if token == "IMAGE":
                 blocks[block_index].append({token.name: token.value})
                 blocks[block_index][0][1] += 1
@@ -207,11 +213,15 @@ def semantic(buffer: List[Token]):
                 image = read_bmp(command["IMAGE"])
 
                 if "COLORMAP" in command:
-                    colormap = create_colormap(command["COLORMAP"][0], command["COLORMAP"][1], "colormap")
+                    colormap = create_colormap(
+                        command["COLORMAP"][0],
+                        command["COLORMAP"][1],
+                        "colormap"
+                    )
                     channel = command["CHANNEL"]
                 else:
                     colormap = None
-                    
+
 
                 if "YCC" in command:
                     image, o_width, o_height = add_padding(image, 32)
@@ -224,11 +234,17 @@ def semantic(buffer: List[Token]):
                 if not "YCC" in command and "CHANNEL" in command:
                     image = separate_channels(image)[channel-1]
 
-                
-                show_img(image, colormap, block[0][0].value, i+1, (int(plot_size/2), int(plot_size/2), j+1))
+                # mostrar a imagem
+                show_img(
+                    image,
+                    colormap,
+                    block[0][0].value,
+                    i+1,
+                    (int(plot_size/2), int(plot_size/2), j+1)
+                    )
 
-        
+    # mostrar a imagem descodificada
     if decoded_image is not None:
-        show_img(decoded_image, name="Descodificada")
+        show_img(decoded_image, name="Decoded")
 
     show()
