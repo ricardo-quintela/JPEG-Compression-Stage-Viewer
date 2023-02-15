@@ -33,14 +33,15 @@ def show_img(
         figure(fig_number)
         subplot(sub_plot_config[0], sub_plot_config[1], sub_plot_config[2])
 
-    else:
-        figure()
 
-    axis("off")
+    if fig_number is None:
+        figure()
 
     # colocar um título no plot
     if name is not None:
         suptitle(name)
+
+    axis("off")
 
     # aplicar um colormap caso seja dado
     if colormap is not None:
