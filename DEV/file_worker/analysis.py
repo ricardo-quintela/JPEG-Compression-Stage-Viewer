@@ -42,13 +42,13 @@ def lex(buffer: str) -> List[Token]:
         value = split(r"\s", match.group())[1]
 
         tokens.append(
-            Token("PLOT", match.start(), 0, value)
+            Token("PLOT", match.start(), value)
         )
 
     # tokens END
     for match in end_matches:
         tokens.append(
-            Token("END", match.start(), 1)
+            Token("END", match.start())
         )
 
     # tokens IMAGE
@@ -56,7 +56,7 @@ def lex(buffer: str) -> List[Token]:
         value = split(r"-i ", sub(r"\"", "", match.group()))[1]
 
         tokens.append(
-            Token("IMAGE", match.start(), 2, value)
+            Token("IMAGE", match.start(), value)
         )
 
     # tokens COLORMAP
@@ -70,7 +70,7 @@ def lex(buffer: str) -> List[Token]:
 
 
         tokens.append(
-            Token("COLORMAP", match.start(), 3, value)
+            Token("COLORMAP", match.start(), value)
         )
 
     # tokens CHANNEL
@@ -78,7 +78,7 @@ def lex(buffer: str) -> List[Token]:
         value = int(split(r" ", match.group())[1])
 
         tokens.append(
-            Token("CHANNEL", match.start(), 4, value)
+            Token("CHANNEL", match.start(), value)
         )
 
     # tokens PADDING
@@ -86,19 +86,19 @@ def lex(buffer: str) -> List[Token]:
         value = int(split(r" ", match.group())[1])
 
         tokens.append(
-            Token("PADDING", match.start(), 5, value)
+            Token("PADDING", match.start(), value)
         )
 
     # tokens YCC
     for match in ycc_matches:
         tokens.append(
-            Token("YCC", match.start(), 6)
+            Token("YCC", match.start())
         )
 
     # tokens RGB
     for match in rgb_matches:
         tokens.append(
-            Token("RGB", match.start(), 7)
+            Token("RGB", match.start())
         )
 
     # ordenar os tokens
@@ -159,6 +159,7 @@ def synt(buffer: List[Token], productions: dict) -> bool:
                     stack_ind = -1
                     break
 
+
     # sucesso no parsing
     if stack == ["PROGRAM"]:
         return True
@@ -166,3 +167,41 @@ def synt(buffer: List[Token], productions: dict) -> bool:
     # falhou
     print("ERRO: não foi possível fazer o parsing do ficheiro de configuração")
     return False
+
+
+
+
+def semantic(buffer: List[Token]):
+
+    commands = list()
+
+    command_index = -1
+    for token in buffer:
+
+        if token == "PLOT":
+            commands.append([[token, 0]])
+            continue
+
+        if token != "END":
+            if token == "IMAGE":
+                commands[command_index][0][1] += 1
+
+            commands[command_index].append(token)
+
+        else:
+            command_index += 1
+
+    
+    print(commands)
+
+            
+
+
+if __name__ == "__main__":
+
+    from file_reader import load_grammar, read_config
+
+    tk = lex(read_config("../ex_1_5_config.cfg"))
+
+    print(synt(tk, load_grammar("../grammar.json")))
+

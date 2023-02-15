@@ -6,7 +6,7 @@ de configuração
 from .file_reader import read_config
 
 # lex_analysis
-from .analysis import lex
+from .analysis import lex, synt
 
 # token
 from .token import Token

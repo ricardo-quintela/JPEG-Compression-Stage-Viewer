@@ -20,7 +20,10 @@
             "IMAGE"
         ],
         [
-            "COMMAND", "COLORMAP", "CHANNEL"
+            "COMMAND", "COLORMAP"
+        ],
+        [
+            "COMMAND", "CHANNEL"
         ],
         [
             "COMMAND", "RGB"

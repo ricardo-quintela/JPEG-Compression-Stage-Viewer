@@ -5,7 +5,7 @@ class Token:
     """Guarda a informação sobre um token
     """
 
-    def __init__(self, name: str, pos: int, index: int, value: object = None) -> None:
+    def __init__(self, name: str, pos: int, value: object = None) -> None:
         """Construtor da classe token
 
         Token
@@ -16,12 +16,10 @@ class Token:
         Args:
             name (str): o nome do token
             pos: (int): a posição do token no buffer
-            index: (int): o indice do token
             value (object, optional): o valor do token. Default a None
         """
         self.name = name
         self.pos = pos
-        self.index = index
         self.value = value
 
         self.matches = list()

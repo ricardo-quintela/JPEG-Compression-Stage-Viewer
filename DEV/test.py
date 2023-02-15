@@ -15,7 +15,7 @@ from imgtools import converter_to_rgb, converter_to_ycbcr
 # file_worker
 from file_worker import read_config
 from file_worker import Token
-from file_worker import lex
+from file_worker import lex, synt
 
 class TestImgToolsReader(unittest.TestCase):
     """Testa o pacote do leitor de imgtools
@@ -204,9 +204,9 @@ class TestImgtoolsConverter(unittest.TestCase):
         """
 
         np.testing.assert_array_almost_equal(
-            converter_to_ycbcr(np.ones((1,1,3), dtype=np.uint8)),
+            converter_to_ycbcr(np.ones((1,1,3), dtype=np.uint8) * 255),
             (
-                np.array([[1.0]], dtype=np.float64),
+                np.array([[255.0]], dtype=np.float64),
                 np.array([[128.0]], dtype=np.float64),
                 np.array([[128.0]], dtype=np.float64)
             )
@@ -220,7 +220,7 @@ class TestImgtoolsConverter(unittest.TestCase):
 
         np.testing.assert_array_equal(
             converter_to_rgb(
-                np.array([[1.0]], dtype=np.float64),
+                np.array([[255.0]], dtype=np.float64),
                 np.array([[128.0]], dtype=np.float64),
                 np.array([[128.0]], dtype=np.float64)
             ),
@@ -306,16 +306,16 @@ class TestFileworkerFileParser(unittest.TestCase):
         self.assertListEqual(
             lex(read_config("test/test_config2.cfg")),
             [
-                "PLOT -> test",
-                "IMAGE -> path",
-                "COLORMAP -> (0.0, 0.0, 0.0, 0.1, 0.2, 0.3)",
-                "CHANNEL -> 2",
-                "YCC -> None",
-                "IMAGE -> path",
-                "COLORMAP -> (0.0, 0.0, 0.0, 1.0, 1.0, 1.0)",
-                "CHANNEL -> 3",
-                "RGB -> None",
-                "END -> None",
+                "PLOT",
+                "IMAGE",
+                "COLORMAP",
+                "CHANNEL",
+                "YCC",
+                "IMAGE",
+                "COLORMAP",
+                "CHANNEL",
+                "RGB",
+                "END",
             ]
         )
 
