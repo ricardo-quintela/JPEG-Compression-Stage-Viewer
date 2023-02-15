@@ -172,9 +172,12 @@ def synt(buffer: List[Token], productions: dict) -> bool:
     return False
 
 
-
-
 def semantic(buffer: List[Token]):
+    """Faz a análise semântica dos tokens fornecidos
+
+    Args:
+        buffer (List[Token]): a lista de tokens depois da análise sintática
+    """
 
     blocks = list()
 

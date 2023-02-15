@@ -4,7 +4,7 @@ de imagens
 
 from numpy import ndarray
 from matplotlib.colors import LinearSegmentedColormap
-from matplotlib.pyplot import figure, subplot, imshow, axis, title, show
+from matplotlib.pyplot import figure, subplot, imshow, axis, suptitle, show
 
 def show_img(
     img: ndarray,
@@ -40,7 +40,7 @@ def show_img(
 
     # colocar um título no plot
     if name is not None:
-        title(name)
+        suptitle(name)
 
     # aplicar um colormap caso seja dado
     if colormap is not None:
