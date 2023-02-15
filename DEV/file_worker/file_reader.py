@@ -3,6 +3,7 @@ de configuração
 """
 
 from os.path import isdir
+from json import loads
 
 def read_config(path: str) -> str:
     """Lê um ficheiro de configuração
@@ -27,6 +28,41 @@ def read_config(path: str) -> str:
     try:
         with open(path, "r", encoding="utf-8") as conf_file:
             return conf_file.read()
+
+    # ficheiro não existe
+    except FileNotFoundError:
+        print("Given file does not exist")
+        return
+
+    # ocorreu outro erro
+    except IOError:
+        print("An error has occured while opening the file")
+        return
+    
+
+def load_grammar(path: str) -> dict:
+    """Lê um ficheiro de JSON contedo a gramática do parser
+
+    Args:
+        path (str): o caminho do ficheiro de gramática
+
+    Returns:
+        dict: um dicionário com as produções de gramática
+    """
+
+    # não é um ficheiro
+    if isdir(path):
+        print("Given path is not a file")
+        return
+
+    # extensão errada
+    if not path.endswith(".json"):
+        print("Given file is not a JSON file")
+
+    # ler o ficheiro
+    try:
+        with open(path, "r", encoding="utf-8") as conf_file:
+            return loads(conf_file.read())
 
     # ficheiro não existe
     except FileNotFoundError:

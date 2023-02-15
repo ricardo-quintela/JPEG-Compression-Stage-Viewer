@@ -5,7 +5,7 @@ ficheiro de configuração
 from typing import List
 from re import finditer, split, sub
 
-from token import Token
+from .token import Token
 
 
 def lex(buffer: str) -> List[Token]:
@@ -166,32 +166,3 @@ def synt(buffer: List[Token], productions: dict) -> bool:
     # falhou
     print("ERRO: não foi possível fazer o parsing do ficheiro de configuração")
     return False
-
-
-
-
-if __name__ == "__main__":
-    
-    from file_parser import read_config
-
-    tk = lex(read_config("../ex_1_5_config.cfg"))
-
-    productions = {
-        "PROGRAM": (
-            ["PLOT", "COMMAND", "END"],
-            ["PROGRAM", "PROGRAM"]
-        ),
-        "COMMAND": (
-            ["SHOW"],
-            ["COMMAND", "COMMAND"]
-        ),
-        "SHOW": (
-            ["IMAGE"],
-            ["COMMAND", "COLORMAP", "CHANNEL"],
-            ["COMMAND", "RGB"],
-            ["COMMAND", "YCC"],
-            ["COMMAND", "PADDING"],
-        )
-    }
-
-    print(synt(tk, productions))
