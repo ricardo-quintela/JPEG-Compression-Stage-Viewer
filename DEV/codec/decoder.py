@@ -1,5 +1,8 @@
+"""Contém funções de decode para o codec JPEG
+"""
+
 from typing import Tuple
-from numpy import zeros, uint8, ndarray
+from numpy import ndarray
 
 from imgtools import converter_to_rgb
 from imgtools import restore_padding

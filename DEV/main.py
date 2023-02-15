@@ -16,7 +16,6 @@ from imgtools import read_bmp
 from imgtools import create_colormap, separate_channels
 from imgtools import converter_to_ycbcr
 from imgtools import add_padding
-from codec import encode, decode
 
 from file_worker import lex, synt, semantic, read_config, load_grammar
 
