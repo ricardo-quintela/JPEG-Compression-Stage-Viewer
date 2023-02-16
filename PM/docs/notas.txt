@@ -64,18 +64,22 @@ T[0,0] * R + T[0,1] * G + T[0,2] * B = Y
 a matriz inversa está tbm nos slides ou, melhor, calcular a inversa da usada originalmente -> Ti = np.linalg.inv(T)
 ao fazer a recuperação temos de transformar tudo em inteiros -> Rrec[R>255] = 255, Rrec[R<0] = 0 , Rrecuperado = np.round(Rrec).astype(up.uint8)
 
+===================================================================================================================================
 
 
+library - opencv-python
+Estudar a função resize ou precise do cv2 -> basta usar interpolação linear (Y:Cr:Cb)
 
+visualizar imagem no dominio da frequencia -> vemos as transições (abruptas ou não) -> frequencia supoem-se que seja a cor
+-> altas frequencias aqui mmostram transições abruptas
+-> dft = faz o mesmo mas a dct concentra maiores frequencias nas baixas energias e isso dá nos melhores resultados
+concentração de energia -> dct concentra mais do que dfta
+8x8 em vez de 64x64 pq foi testado e blocos pequenos para obter mais transições suaves 
+função dct chama-se 2 vezes porque são 2 dimensões
 
-Estudar a função resize ou precise do cv2
+fazer compressão da escala -> logaritmo -> valores próximos fica melhor para visualizar
+comparar resultados dct para saber o impacto da escolha do bloco na compressão
 
+padding 32x32 -> porque a sub-amostragem máximo é 4:1:1 e como são blocos de 8 terá de ser 8*4=32
 
-
-
-
-
-
-
-
-
+imagem branca -> DCT -> valor alto no canto superior esquerdo e o resto a 0 porque não há transições
