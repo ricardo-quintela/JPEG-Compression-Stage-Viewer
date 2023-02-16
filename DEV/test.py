@@ -11,6 +11,7 @@ from imgtools import read_bmp
 from imgtools import create_colormap, separate_channels, join_channels
 from imgtools import add_padding, restore_padding
 from imgtools import converter_to_rgb, converter_to_ycbcr
+from imgtools import sub_sample
 
 # file_worker
 from file_worker import read_config
@@ -319,7 +320,24 @@ class TestFileworkerFileParser(unittest.TestCase):
             ]
         )
 
-
-
+class TestImgtoolsSampler(unittest.TestCase):
+    
+    
+    def test_scale(self):
+        a,b,c = sub_sample(np.ones((32,32), dtype=np.float32), np.ones((32,32), dtype=np.float32), np.ones((32,32), dtype=np.float32), (4,2,2))
+        np.testing.assert_array_equal(
+            a,
+            np.ones((32,32), dtype=np.float32)
+        )
+        np.testing.assert_array_equal(
+            b,
+            np.ones((16,32), dtype=np.float32)
+        )
+        np.testing.assert_array_equal(
+            c,
+            np.ones((16,32), dtype=np.float32)
+        )
+    
+    
 if __name__ == "__main__":
     unittest.main()
