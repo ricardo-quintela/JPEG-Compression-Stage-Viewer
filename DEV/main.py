@@ -70,6 +70,14 @@ def main():
         nargs=6
     )
 
+    # nome do plot
+    parser.add_argument(
+        "-n", "--name",
+        type=str,
+        help="give a name to the plot",
+        metavar="NAME"
+    )
+
     # modelos de cor
     color_model_group = parser.add_mutually_exclusive_group()
     color_model_group.add_argument(
@@ -129,6 +137,11 @@ def main():
         if image is None:
             return
 
+        if args.name:
+                name = args.name
+        else:
+            name = None
+
         # add padding to the image
         if args.padding:
             image, *_ = add_padding(image, args.padding)
@@ -161,11 +174,11 @@ def main():
                 selected_channel = channels[2]
 
             # mostrar a imagem com o colormap
-            show_img(selected_channel, colormap)
+            show_img(selected_channel, colormap, name=name)
 
         # mostrar a imagem sem colormap
         else:
-            show_img(image)
+            show_img(image, name=name)
 
     if args.config:
         grammar = load_grammar("grammar.json")

@@ -4,11 +4,12 @@ de imagens
 
 from numpy import ndarray
 from matplotlib.colors import LinearSegmentedColormap
-from matplotlib.pyplot import figure, subplot, imshow, axis, suptitle, show
+from matplotlib.pyplot import figure, subplot, imshow, axis, suptitle, title, show
 
 def show_img(
     img: ndarray,
     colormap: LinearSegmentedColormap = None,
+    plot_title: str = None,
     name: str = None,
     fig_number: int = None,
     sub_plot_config: tuple = None
@@ -20,6 +21,7 @@ def show_img(
         img (ndarray): a matriz da imagem
         colormap (LinearSegmentedColormap, optional): o colormap para mostrar na
         imagem. Defaults to None.
+        plot_title (str, optional): o título principal do plot. Default a None.
         name (str, optional): o título do plot. Default a None.
         fig_numb (int, optional): o numero da figura. Default a None
         sub_plot_config (tuple, optional): a configuração do subplot (linhas, colunas, indice[1, ...]). Default a None
@@ -38,15 +40,19 @@ def show_img(
         figure()
 
     # colocar um título no plot
+    if plot_title is not None:
+        suptitle(plot_title)
+
+    # colocar um título no plot
     if name is not None:
-        suptitle(name)
+        title(name)
 
     axis("off")
 
     # aplicar um colormap caso seja dado
     if colormap is not None:
         imshow(img, colormap)
-        
+
         if fig_number is None:
             show()
         return

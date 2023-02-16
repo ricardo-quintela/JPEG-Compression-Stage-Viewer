@@ -34,12 +34,14 @@ def lex(buffer: str) -> List[Token]:
     # encontrar plots
     plot_matches = finditer(r"plot ([a-zA-Z0-9_]+|\"[a-zA-Z0-9_ ]+\")\n", buffer)
     end_matches = finditer(r"end\n", buffer)
-    image_matches = finditer(r"-i \"([^\s]| )+\"|-i [^\s\"]+", buffer)
+    image_matches = finditer(r"-i \"([^\s\"]| )+\"|-i [^\s\"]+", buffer)
     colormap_matches = finditer(
         r"-m " + f"{number} "*5 + number,
         buffer
     )
     channel_matches = finditer(r"-c [123]", buffer)
+    name_matches = finditer(r"-n ([a-zA-Z0-9_]+|\"[a-zA-Z0-9_ ]+\")", buffer)
+    padding_matches = finditer(r"-p [0-9]+", buffer)
     ycc_matches = finditer(r"-y", buffer)
     rgb_matches = finditer(r"-r", buffer)
 
@@ -90,6 +92,21 @@ def lex(buffer: str) -> List[Token]:
             Token("CHANNEL", match.start(), value)
         )
 
+    # tokens PADDING
+    for match in padding_matches:
+        value = int(split(r" ", match.group())[1])
+
+        tokens.append(
+            Token("PADDING", match.start(), value)
+        )
+
+    # tokens NAME
+    for match in name_matches:
+        value = split(r"-n |\n", sub(r"\"", "", match.group()))[1]
+
+        tokens.append(
+            Token("NAME", match.start(), value)
+        )
 
     # tokens YCC
     for match in ycc_matches:
@@ -105,6 +122,7 @@ def lex(buffer: str) -> List[Token]:
 
     # ordenar os tokens
     tokens.sort()
+
 
     return tokens
 
@@ -202,6 +220,8 @@ def semantic(buffer: List[Token]):
             block_index += 1
             command_index = 0
 
+    decoded_image = None
+
     # interpretar comandos
     for i, block in enumerate(blocks):
 
@@ -211,6 +231,9 @@ def semantic(buffer: List[Token]):
 
             for j, command in enumerate(block[1:]):
                 image = read_bmp(command["IMAGE"])
+                if image is None:
+                    print(command["IMAGE"])
+                    return
 
                 if "COLORMAP" in command:
                     colormap = create_colormap(
@@ -222,9 +245,23 @@ def semantic(buffer: List[Token]):
                 else:
                     colormap = None
 
+                # adicionar padding
+                if "PADDING" in command:
+                    image, o_width, o_height = add_padding(image, command["PADDING"])
+
+                # nome do subplot
+                if "NAME" in command:
+                    name = command["NAME"]
+                else:
+                    name = None
+
 
                 if "YCC" in command:
-                    image, o_width, o_height = add_padding(image, 32)
+
+                    # caso não haja padding
+                    if not "PADDING" in command:
+                        image, o_width, o_height = add_padding(image, 32)
+
                     converted_image = converter_to_ycbcr(image)
                     image = converted_image[channel-1]
 
@@ -239,6 +276,7 @@ def semantic(buffer: List[Token]):
                     image,
                     colormap,
                     block[0][0].value,
+                    name,
                     i+1,
                     (int(plot_size/2), int(plot_size/2), j+1)
                     )
