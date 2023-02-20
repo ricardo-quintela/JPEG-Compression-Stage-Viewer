@@ -323,7 +323,7 @@ class TestFileworkerFileParser(unittest.TestCase):
 class TestImgtoolsSampler(unittest.TestCase):
     
     
-    def test_scale(self):
+    def test_scale_422(self):
         a,b,c = sub_sample(np.ones((32,32), dtype=np.float32), np.ones((32,32), dtype=np.float32), np.ones((32,32), dtype=np.float32), (4,2,2))
         np.testing.assert_array_equal(
             a,
@@ -337,6 +337,21 @@ class TestImgtoolsSampler(unittest.TestCase):
             c,
             np.ones((16,32), dtype=np.float32)
         )
+
+    def test_scale_420(self):
+        d,e,f = sub_sample(np.ones((32,32), dtype=np.float32), np.ones((32,32), dtype=np.float32), np.ones((32,32), dtype=np.float32), (4,2,0))
+        np.testing.assert_array_equal(
+            d,
+            np.ones((32,32), dtype=np.float32)
+        )
+        np.testing.assert_array_equal(
+            e,
+            np.ones((16,16), dtype=np.float32)
+        )
+        np.testing.assert_array_equal(
+            f,
+            np.ones((16,16), dtype=np.float32)
+        )        
     
     
 if __name__ == "__main__":
