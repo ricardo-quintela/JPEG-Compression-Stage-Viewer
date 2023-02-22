@@ -326,8 +326,9 @@ class TestImgtoolsSampler(unittest.TestCase):
     """Testa o módulo sampler do package Imagetools
     """
 
-    def test_scale_y(self):
+    def test_scale_y_422(self):
         """Testa se o canal Y é corretamente escalado
+        com o modo 422 de subsampling
         """
 
         np.testing.assert_array_equal(
@@ -340,8 +341,9 @@ class TestImgtoolsSampler(unittest.TestCase):
             np.ones((32,32), dtype=np.float32)
         )
 
-    def test_scale_cb(self):
+    def test_scale_cb_422(self):
         """Testa se o canal Cb é corretamente escalado
+        com o modo 422 de subsampling
         """
 
         np.testing.assert_array_equal(
@@ -355,8 +357,9 @@ class TestImgtoolsSampler(unittest.TestCase):
         )
 
 
-    def test_scale_cr(self):
+    def test_scale_cr_422(self):
         """Testa se o canal Cr é corretamente escalado
+        com o modo 422 de subsampling
         """
 
         np.testing.assert_array_equal(
@@ -368,6 +371,54 @@ class TestImgtoolsSampler(unittest.TestCase):
             )[2],
             np.ones((16,32), dtype=np.float32)
         )
+
+
+    def test_scale_y_420(self):
+        """Testa se o canal Y é corretamente escalado
+        com o modo 420 de subsampling
+        """
+
+        np.testing.assert_array_equal(
+            sub_sample(
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                (4,2,2)
+            )[0],
+            np.ones((32,32), dtype=np.float32)
+        )
+
+    def test_scale_cb_420(self):
+        """Testa se o canal Cb é corretamente escalado
+        com o modo 420 de subsampling
+        """
+
+        np.testing.assert_array_equal(
+            sub_sample(
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                (4,2,2)
+            )[1],
+            np.ones((16,16), dtype=np.float32)
+        )
+
+
+    def test_scale_cr_420(self):
+        """Testa se o canal Cr é corretamente escalado
+        com o modo 420 de subsampling
+        """
+
+        np.testing.assert_array_equal(
+            sub_sample(
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                (4,2,2)
+            )[2],
+            np.ones((16,16), dtype=np.float32)
+        )
+
 
     
 if __name__ == "__main__":
