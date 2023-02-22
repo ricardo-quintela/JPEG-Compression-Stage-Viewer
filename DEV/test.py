@@ -16,7 +16,7 @@ from imgtools import sub_sample
 # file_worker
 from file_worker import read_config
 from file_worker import Token
-from file_worker import lex, synt
+from file_worker import lex
 
 class TestImgToolsReader(unittest.TestCase):
     """Testa o pacote do leitor de imgtools
@@ -304,6 +304,8 @@ class TestFileworkerFileParser(unittest.TestCase):
     """
 
     def test_lex(self):
+        """Testa se são apanhados os tokens corretamente
+        """
         self.assertListEqual(
             lex(read_config("test/test_config2.cfg")),
             [
@@ -321,23 +323,52 @@ class TestFileworkerFileParser(unittest.TestCase):
         )
 
 class TestImgtoolsSampler(unittest.TestCase):
-    
-    
-    def test_scale(self):
-        a,b,c = sub_sample(np.ones((32,32), dtype=np.float32), np.ones((32,32), dtype=np.float32), np.ones((32,32), dtype=np.float32), (4,2,2))
+    """Testa o módulo sampler do package Imagetools
+    """
+
+    def test_scale_y(self):
+        """Testa se o canal Y é corretamente escalado
+        """
+
         np.testing.assert_array_equal(
-            a,
+            sub_sample(
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                (4,2,2)
+            )[0],
             np.ones((32,32), dtype=np.float32)
         )
+
+    def test_scale_cb(self):
+        """Testa se o canal Cb é corretamente escalado
+        """
+
         np.testing.assert_array_equal(
-            b,
+            sub_sample(
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                (4,2,2)
+            )[1],
             np.ones((16,32), dtype=np.float32)
         )
+
+
+    def test_scale_cr(self):
+        """Testa se o canal Cr é corretamente escalado
+        """
+
         np.testing.assert_array_equal(
-            c,
+            sub_sample(
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                (4,2,2)
+            )[2],
             np.ones((16,32), dtype=np.float32)
         )
-    
+
     
 if __name__ == "__main__":
     unittest.main()
