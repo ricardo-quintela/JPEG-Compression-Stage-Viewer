@@ -16,9 +16,9 @@ from imgtools import read_bmp
 from imgtools import create_colormap, separate_channels
 from imgtools import converter_to_ycbcr
 from imgtools import add_padding
+from imgtools import down_sample, up_sample
 
 from file_worker import lex, synt, semantic, read_config, load_grammar
-
 
 
 def main():
@@ -100,19 +100,19 @@ def main():
 
     args = parser.parse_args()
 
-
     #  verificar se argumentos são usados com seus parents corretos
     if args.image and args.channel and not args.colormap:
         parser.print_usage()
-        print(f"{basename(__file__)}: error: channel argument can only be user with a colormap")
+        print(
+            f"{basename(__file__)}: error: channel argument can only be user with a colormap")
         return
 
     #  verificar se argumentos são usados com seus parents corretos
     if args.image and args.ycbcr and not args.colormap:
         parser.print_usage()
-        print(f"{basename(__file__)}: error: ycbcr argument can only be user with a colormap")
+        print(
+            f"{basename(__file__)}: error: ycbcr argument can only be user with a colormap")
         return
-
 
     # verificar se as cores passadas estão no formato certo
     if args.colormap is not None and len(args.colormap) % 3 != 0:
@@ -126,7 +126,8 @@ def main():
 
         if args.channel is None:
             parser.print_usage()
-            print(f"{basename(__file__)}: error: colormap argument requires the selection of a color channel")
+            print(
+                f"{basename(__file__)}: error: colormap argument requires the selection of a color channel")
             return
 
     # o utilizador escolhe ver a imagem
@@ -138,14 +139,13 @@ def main():
             return
 
         if args.name:
-                name = args.name
+            name = args.name
         else:
             name = None
 
         # add padding to the image
         if args.padding:
             image, *_ = add_padding(image, args.padding)
-
 
         # utilizador quer usar um colormap
         if args.colormap:
@@ -158,6 +158,15 @@ def main():
             # converter a imagem para ycbcr
             if args.ycbcr:
                 channels = converter_to_ycbcr(image)
+                map_gr = create_colormap((0, 0, 0), (1, 1, 1), "grayscale")
+                down_channels = down_sample(
+                    channels[0], channels[1], channels[2], (4, 2, 0))
+                show_img(down_channels[0], map_gr,
+                         fig_number=1, name="down_y")
+                show_img(down_channels[1], map_gr,
+                         fig_number=1, name="down_cb")
+                show_img(down_channels[2], map_gr,
+                         fig_number=1, name="down_cr")
 
             if not args.ycbcr:
                 # separar os canais
@@ -194,7 +203,6 @@ def main():
             return
 
         semantic(tokens)
-
 
 
 if __name__ == "__main__":
