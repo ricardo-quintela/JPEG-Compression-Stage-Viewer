@@ -11,7 +11,7 @@ from imgtools import read_bmp
 from imgtools import create_colormap, separate_channels, join_channels
 from imgtools import add_padding, restore_padding
 from imgtools import converter_to_rgb, converter_to_ycbcr
-from imgtools import sub_sample
+from imgtools import down_sample
 
 # file_worker
 from file_worker import read_config
@@ -157,9 +157,9 @@ class TestImgToolsColor(unittest.TestCase):
         """
         self.assertEqual(
             join_channels(
+                np.array([[[255,255,255]]], dtype=np.uint8),
                 np.array([[255,255,255]], dtype=np.uint8),
-                np.array([[255,255,255]], dtype=np.uint8),
-                np.array([[255,255,255]], dtype=np.uint8),
+                np.array([[255,255]], dtype=np.uint8),
             ),
             None
         )
@@ -306,8 +306,10 @@ class TestFileworkerFileParser(unittest.TestCase):
     def test_lex(self):
         """Testa se são apanhados os tokens corretamente
         """
+        l = [str(i) for i in lex(read_config("test/test_config2.cfg"))]
+
         self.assertListEqual(
-            lex(read_config("test/test_config2.cfg")),
+            l,
             [
                 "PLOT",
                 "IMAGE",
@@ -318,6 +320,7 @@ class TestFileworkerFileParser(unittest.TestCase):
                 "COLORMAP",
                 "CHANNEL",
                 "RGB",
+                "SUBSAMPLE",
                 "END",
             ]
         )
@@ -332,7 +335,7 @@ class TestImgtoolsSampler(unittest.TestCase):
         """
 
         np.testing.assert_array_equal(
-            sub_sample(
+            down_sample(
                 np.ones((32,32), dtype=np.float32),
                 np.ones((32,32), dtype=np.float32),
                 np.ones((32,32), dtype=np.float32),
@@ -347,7 +350,7 @@ class TestImgtoolsSampler(unittest.TestCase):
         """
 
         np.testing.assert_array_equal(
-            sub_sample(
+            down_sample(
                 np.ones((32,32), dtype=np.float32),
                 np.ones((32,32), dtype=np.float32),
                 np.ones((32,32), dtype=np.float32),
@@ -363,7 +366,7 @@ class TestImgtoolsSampler(unittest.TestCase):
         """
 
         np.testing.assert_array_equal(
-            sub_sample(
+            down_sample(
                 np.ones((32,32), dtype=np.float32),
                 np.ones((32,32), dtype=np.float32),
                 np.ones((32,32), dtype=np.float32),
@@ -379,11 +382,11 @@ class TestImgtoolsSampler(unittest.TestCase):
         """
 
         np.testing.assert_array_equal(
-            sub_sample(
+            down_sample(
                 np.ones((32,32), dtype=np.float32),
                 np.ones((32,32), dtype=np.float32),
                 np.ones((32,32), dtype=np.float32),
-                (4,2,2)
+                (4,2,0)
             )[0],
             np.ones((32,32), dtype=np.float32)
         )
@@ -394,13 +397,13 @@ class TestImgtoolsSampler(unittest.TestCase):
         """
 
         np.testing.assert_array_equal(
-            sub_sample(
+            down_sample(
                 np.ones((32,32), dtype=np.float32),
                 np.ones((32,32), dtype=np.float32),
                 np.ones((32,32), dtype=np.float32),
-                (4,2,2)
+                (4,2,0)
             )[1],
-            np.ones((16,16), dtype=np.float32)
+            np.ones((16,32), dtype=np.float32)
         )
 
 
@@ -410,11 +413,11 @@ class TestImgtoolsSampler(unittest.TestCase):
         """
 
         np.testing.assert_array_equal(
-            sub_sample(
+            down_sample(
                 np.ones((32,32), dtype=np.float32),
                 np.ones((32,32), dtype=np.float32),
                 np.ones((32,32), dtype=np.float32),
-                (4,2,2)
+                (4,2,0)
             )[2],
             np.ones((16,16), dtype=np.float32)
         )

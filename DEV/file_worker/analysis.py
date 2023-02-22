@@ -44,6 +44,7 @@ def lex(buffer: str) -> List[Token]:
     padding_matches = finditer(r"-p [0-9]+", buffer)
     ycc_matches = finditer(r"-y", buffer)
     rgb_matches = finditer(r"-r", buffer)
+    subsample_matches = finditer(r"-s [0-9] [0-9] [0-9]", buffer)
 
 
     tokens = list()
@@ -120,9 +121,22 @@ def lex(buffer: str) -> List[Token]:
             Token("RGB", match.start())
         )
 
+    # tokens SUBSAMPLE
+    for match in subsample_matches:
+        numbers = split(r" ", match.group())[1:]
+
+        value = (
+            int(numbers[0]),
+            int(numbers[1]),
+            int(numbers[2])
+        )
+
+        tokens.append(
+            Token("SUBSAMPLE", match.start(), value)
+        )
+    
     # ordenar os tokens
     tokens.sort()
-
 
     return tokens
 

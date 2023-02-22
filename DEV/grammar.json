@@ -36,6 +36,9 @@
         ],
         [
             "COMMAND", "NAME"
+        ],
+        [
+            "COMMAND", "SUBSAMPLE"
         ]
     ]
 }
