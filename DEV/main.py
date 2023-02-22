@@ -161,12 +161,13 @@ def main():
                 map_gr = create_colormap((0, 0, 0), (1, 1, 1), "grayscale")
                 down_channels = down_sample(
                     channels[0], channels[1], channels[2], (4, 2, 0))
-                show_img(down_channels[0], map_gr,
-                         fig_number=1, name="down_y")
-                show_img(down_channels[1], map_gr,
-                         fig_number=1, name="down_cb")
-                show_img(down_channels[2], map_gr,
-                         fig_number=1, name="down_cr")
+                # show_img(down_channels[0], map_gr,fig_number=1, name="down_y")
+                # show_img(down_channels[1], map_gr,fig_number=1, name="down_cb")
+                # show_img(down_channels[2], map_gr,fig_number=1,     name="down_cr")
+                up_channels = up_sample(down_channels[0], down_channels[1], down_channels[2])
+                print(up_channels[0].shape)
+                print(up_channels[1].shape)
+                print(up_channels[2].shape)
 
             if not args.ycbcr:
                 # separar os canais
