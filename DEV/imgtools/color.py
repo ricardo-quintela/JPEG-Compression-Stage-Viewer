@@ -86,7 +86,7 @@ def join_channels(ch1: ndarray, ch2: ndarray, ch3: ndarray) -> ndarray:
         ch3 (ndarray): o terceiro canal
 
     Returns:
-        ndarray: a imagem reconstruida com os canais RGB ou YCbCr
+        ndarray: a imagem reconstruida com os canais RGB ou YCbCr ou None caso ocorra um erro
     """
 
     # canais da imagem não são iguais
@@ -95,14 +95,19 @@ def join_channels(ch1: ndarray, ch2: ndarray, ch3: ndarray) -> ndarray:
         return
 
     # canais da imagem estão no formato errado
-    if ch1.shape != (1,1):
+    if len(ch1.shape) != 2:
         print("Given channel is in the wrong format")
         return
 
-    img = zeros((1,1,3), dtype=uint8)
+    img = zeros((ch1.shape[0],ch1.shape[1],3), dtype=uint8)
 
-    img[:,:,0] = ch1
-    img[:,:,1] = ch2
-    img[:,:,2] = ch3
+
+    try:
+        img[:,:,0] = ch1
+        img[:,:,1] = ch2
+        img[:,:,2] = ch3
+    except ValueError:
+        print("Could not join the channels")
+        return
 
     return img

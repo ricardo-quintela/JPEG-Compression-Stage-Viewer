@@ -16,8 +16,9 @@ from imgtools import read_bmp
 from imgtools import create_colormap, separate_channels
 from imgtools import converter_to_ycbcr
 from imgtools import add_padding
-from codec import encode, decode
+from imgtools import down_sample, up_sample
 
+from file_worker import lex, synt, semantic, read_config, load_grammar
 
 
 def main():
@@ -69,6 +70,14 @@ def main():
         nargs=6
     )
 
+    # nome do plot
+    parser.add_argument(
+        "-n", "--name",
+        type=str,
+        help="give a name to the plot",
+        metavar="NAME"
+    )
+
     # modelos de cor
     color_model_group = parser.add_mutually_exclusive_group()
     color_model_group.add_argument(
@@ -91,19 +100,19 @@ def main():
 
     args = parser.parse_args()
 
-
     #  verificar se argumentos são usados com seus parents corretos
     if args.image and args.channel and not args.colormap:
         parser.print_usage()
-        print(f"{basename(__file__)}: error: channel argument can only be user with a colormap")
+        print(
+            f"{basename(__file__)}: error: channel argument can only be user with a colormap")
         return
 
     #  verificar se argumentos são usados com seus parents corretos
     if args.image and args.ycbcr and not args.colormap:
         parser.print_usage()
-        print(f"{basename(__file__)}: error: ycbcr argument can only be user with a colormap")
+        print(
+            f"{basename(__file__)}: error: ycbcr argument can only be user with a colormap")
         return
-
 
     # verificar se as cores passadas estão no formato certo
     if args.colormap is not None and len(args.colormap) % 3 != 0:
@@ -117,21 +126,26 @@ def main():
 
         if args.channel is None:
             parser.print_usage()
-            print(f"{basename(__file__)}: error: colormap argument requires the selection of a color channel")
+            print(
+                f"{basename(__file__)}: error: colormap argument requires the selection of a color channel")
             return
 
     # o utilizador escolhe ver a imagem
-    if args.image is not None:
+    if args.image:
 
         # ler a imagem
         image = read_bmp(args.image)
         if image is None:
             return
 
+        if args.name:
+            name = args.name
+        else:
+            name = None
+
         # add padding to the image
         if args.padding:
             image, *_ = add_padding(image, args.padding)
-
 
         # utilizador quer usar um colormap
         if args.colormap:
@@ -144,6 +158,16 @@ def main():
             # converter a imagem para ycbcr
             if args.ycbcr:
                 channels = converter_to_ycbcr(image)
+                map_gr = create_colormap((0, 0, 0), (1, 1, 1), "grayscale")
+                down_channels = down_sample(
+                    channels[0], channels[1], channels[2], (4, 2, 0))
+                # show_img(down_channels[0], map_gr,fig_number=1, name="down_y")
+                # show_img(down_channels[1], map_gr,fig_number=1, name="down_cb")
+                # show_img(down_channels[2], map_gr,fig_number=1,     name="down_cr")
+                up_channels = up_sample(down_channels[0], down_channels[1], down_channels[2])
+                print(up_channels[0].shape)
+                print(up_channels[1].shape)
+                print(up_channels[2].shape)
 
             if not args.ycbcr:
                 # separar os canais
@@ -160,15 +184,26 @@ def main():
                 selected_channel = channels[2]
 
             # mostrar a imagem com o colormap
-            show_img(selected_channel, colormap)
+            show_img(selected_channel, colormap, name=name)
 
         # mostrar a imagem sem colormap
         else:
-            show_img(image)
+            show_img(image, name=name)
 
     if args.config:
-        img, width, height = encode(args.config)
-        decode(img, width, height)
+        grammar = load_grammar("grammar.json")
+        if grammar is None:
+            return
+
+        config = read_config(args.config)
+        if config is None:
+            return
+
+        tokens = lex(config)
+        if not synt(tokens, grammar):
+            return
+
+        semantic(tokens)
 
 
 if __name__ == "__main__":

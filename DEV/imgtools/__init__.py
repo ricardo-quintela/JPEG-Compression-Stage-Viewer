@@ -15,3 +15,6 @@ from .viewer import show_img
 
 # converter
 from .converter import converter_to_rgb, converter_to_ycbcr
+
+# sampler
+from .sampler import down_sample, up_sample

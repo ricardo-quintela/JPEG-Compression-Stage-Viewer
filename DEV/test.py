@@ -11,9 +11,12 @@ from imgtools import read_bmp
 from imgtools import create_colormap, separate_channels, join_channels
 from imgtools import add_padding, restore_padding
 from imgtools import converter_to_rgb, converter_to_ycbcr
+from imgtools import down_sample
 
 # file_worker
 from file_worker import read_config
+from file_worker import Token
+from file_worker import lex
 
 class TestImgToolsReader(unittest.TestCase):
     """Testa o pacote do leitor de imgtools
@@ -154,9 +157,9 @@ class TestImgToolsColor(unittest.TestCase):
         """
         self.assertEqual(
             join_channels(
+                np.array([[[255,255,255]]], dtype=np.uint8),
                 np.array([[255,255,255]], dtype=np.uint8),
-                np.array([[255,255,255]], dtype=np.uint8),
-                np.array([[255,255,255]], dtype=np.uint8),
+                np.array([[255,255]], dtype=np.uint8),
             ),
             None
         )
@@ -202,9 +205,9 @@ class TestImgtoolsConverter(unittest.TestCase):
         """
 
         np.testing.assert_array_almost_equal(
-            converter_to_ycbcr(np.ones((1,1,3), dtype=np.uint8)),
+            converter_to_ycbcr(np.ones((1,1,3), dtype=np.uint8) * 255),
             (
-                np.array([[1.0]], dtype=np.float64),
+                np.array([[255.0]], dtype=np.float64),
                 np.array([[128.0]], dtype=np.float64),
                 np.array([[128.0]], dtype=np.float64)
             )
@@ -218,7 +221,7 @@ class TestImgtoolsConverter(unittest.TestCase):
 
         np.testing.assert_array_equal(
             converter_to_rgb(
-                np.array([[1.0]], dtype=np.float64),
+                np.array([[255.0]], dtype=np.float64),
                 np.array([[128.0]], dtype=np.float64),
                 np.array([[128.0]], dtype=np.float64)
             ),
@@ -264,9 +267,162 @@ class TestFileworkerReader(unittest.TestCase):
         cfg a função retorna None
         """
         self.assertEqual(
-            read_config("test/test_config2.cfg"),
+            read_config("test/test_configNOT.cfg"),
             None
         )
 
+
+
+class TestFileworkerToken(unittest.TestCase):
+    """Testa o modulo token do package file_worker
+    """
+
+    def test_sort_tokens(self):
+        """Testa se um array de tokens pode ser
+        ordenado com base na sua posição
+        """
+        tokens = [
+            Token("TEST4", 4),
+            Token("TEST2", 2),
+            Token("TEST3", 3),
+            Token("TEST1", 1)
+        ]
+        tokens.sort()
+
+        self.assertListEqual(
+            tokens,
+            [
+                Token("TEST1", 1),
+                Token("TEST2", 2),
+                Token("TEST3", 3),
+                Token("TEST4", 4)
+            ]
+        )
+
+class TestFileworkerFileParser(unittest.TestCase):
+    """Testa o modulo file parser do package file worker
+    """
+
+    def test_lex(self):
+        """Testa se são apanhados os tokens corretamente
+        """
+        l = [str(i) for i in lex(read_config("test/test_config2.cfg"))]
+
+        self.assertListEqual(
+            l,
+            [
+                "PLOT",
+                "IMAGE",
+                "COLORMAP",
+                "CHANNEL",
+                "YCC",
+                "IMAGE",
+                "COLORMAP",
+                "CHANNEL",
+                "RGB",
+                "SUBSAMPLE",
+                "END",
+            ]
+        )
+
+class TestImgtoolsSampler(unittest.TestCase):
+    """Testa o módulo sampler do package Imagetools
+    """
+
+    def test_scale_y_422(self):
+        """Testa se o canal Y é corretamente escalado
+        com o modo 422 de subsampling
+        """
+
+        np.testing.assert_array_equal(
+            down_sample(
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                (4,2,2)
+            )[0],
+            np.ones((32,32), dtype=np.float32)
+        )
+
+    def test_scale_cb_422(self):
+        """Testa se o canal Cb é corretamente escalado
+        com o modo 422 de subsampling
+        """
+
+        np.testing.assert_array_equal(
+            down_sample(
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                (4,2,2)
+            )[1],
+            np.ones((16,32), dtype=np.float32)
+        )
+
+
+    def test_scale_cr_422(self):
+        """Testa se o canal Cr é corretamente escalado
+        com o modo 422 de subsampling
+        """
+
+        np.testing.assert_array_equal(
+            down_sample(
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                (4,2,2)
+            )[2],
+            np.ones((16,32), dtype=np.float32)
+        )
+
+
+    def test_scale_y_420(self):
+        """Testa se o canal Y é corretamente escalado
+        com o modo 420 de subsampling
+        """
+
+        np.testing.assert_array_equal(
+            down_sample(
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                (4,2,0)
+            )[0],
+            np.ones((32,32), dtype=np.float32)
+        )
+
+    def test_scale_cb_420(self):
+        """Testa se o canal Cb é corretamente escalado
+        com o modo 420 de subsampling
+        """
+
+        np.testing.assert_array_equal(
+            down_sample(
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                (4,2,0)
+            )[1],
+            np.ones((16,32), dtype=np.float32)
+        )
+
+
+    def test_scale_cr_420(self):
+        """Testa se o canal Cr é corretamente escalado
+        com o modo 420 de subsampling
+        """
+
+        np.testing.assert_array_equal(
+            down_sample(
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                np.ones((32,32), dtype=np.float32),
+                (4,2,0)
+            )[2],
+            np.ones((16,16), dtype=np.float32)
+        )
+
+
+    
 if __name__ == "__main__":
     unittest.main()

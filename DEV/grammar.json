@@ -1,0 +1,44 @@
+{
+    "PROGRAM": [
+        [
+            "PLOT", "COMMAND", "END"
+        ],
+        [
+            "PROGRAM", "PROGRAM"
+        ]
+    ],
+    "COMMAND": [
+        [
+            "SHOW"
+        ],
+        [
+            "COMMAND", "COMMAND"
+        ]
+    ],
+    "SHOW": [
+        [
+            "IMAGE"
+        ],
+        [
+            "COMMAND", "COLORMAP"
+        ],
+        [
+            "COMMAND", "CHANNEL"
+        ],
+        [
+            "COMMAND", "RGB"
+        ],
+        [
+            "COMMAND", "YCC"
+        ],
+        [
+            "COMMAND", "PADDING"
+        ],
+        [
+            "COMMAND", "NAME"
+        ],
+        [
+            "COMMAND", "SUBSAMPLE"
+        ]
+    ]
+}
