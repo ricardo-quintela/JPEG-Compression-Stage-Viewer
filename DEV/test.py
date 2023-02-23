@@ -424,7 +424,7 @@ class TestImgtoolsSampler(unittest.TestCase):
     
     def test_scale_y_420_up(self):
         """Testa se o canal Y é corretamente escalado
-        com o modo 420 de subsampling
+        com o modo 420 de upsampling
         """
 
         np.testing.assert_array_equal(
@@ -437,8 +437,8 @@ class TestImgtoolsSampler(unittest.TestCase):
         )
     
     def test_scale_cr_420_up(self):
-        """Testa se o canal Cb é corretamente escalado
-        com o modo 420 de subsampling
+        """Testa se o canal Cr é corretamente escalado
+        com o modo 420 de upsampling
         """
 
         np.testing.assert_array_equal(
@@ -451,8 +451,8 @@ class TestImgtoolsSampler(unittest.TestCase):
         )
         
     def test_scale_cb_420_up(self):
-        """Testa se o canal Cr é corretamente escalado
-        com o modo 420 de subsampling
+        """Testa se o canal Cb é corretamente escalado
+        com o modo 420 de upsampling
         """
 
         np.testing.assert_array_equal(
@@ -465,8 +465,8 @@ class TestImgtoolsSampler(unittest.TestCase):
         )
 
     def test_scale_y_422_up(self):
-        """Testa se o canal Cr é corretamente escalado
-        com o modo 422 de subsampling
+        """Testa se o canal y é corretamente escalado
+        com o modo 422 de upsampling
         """
 
         np.testing.assert_array_equal(
@@ -480,7 +480,7 @@ class TestImgtoolsSampler(unittest.TestCase):
     
     def test_scale_cr_422_up(self):
         """Testa se o canal Cr é corretamente escalado
-        com o modo 422 de subsampling
+        com o modo 422 de upsampling
         """
 
         np.testing.assert_array_equal(
@@ -493,8 +493,8 @@ class TestImgtoolsSampler(unittest.TestCase):
         )
     
     def test_scale_cb_422_up(self):
-        """Testa se o canal Cr é corretamente escalado
-        com o modo 422 de subsampling
+        """Testa se o canal Cb é corretamente escalado
+        com o modo 422 de upsampling
         """
 
         np.testing.assert_array_equal(
