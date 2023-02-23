@@ -4,7 +4,7 @@ de imagens
 
 from numpy import ndarray
 from matplotlib.colors import LinearSegmentedColormap
-from matplotlib.pyplot import figure, subplot, imshow, axis, suptitle, title, show
+from matplotlib.pyplot import figure, subplot, imshow, axis, suptitle, title, show, autoscale
 
 def show_img(
     img: ndarray,
@@ -48,17 +48,18 @@ def show_img(
         title(name)
 
     axis("off")
+    
 
     # aplicar um colormap caso seja dado
     if colormap is not None:
-        imshow(img, colormap)
+        imshow(img, colormap, aspect="equal")
 
         if fig_number is None:
             show()
         return
 
     # caso não seja passado colormap
-    imshow(img)
+    imshow(img, aspect="equal")
 
     if fig_number is None:
         show()
