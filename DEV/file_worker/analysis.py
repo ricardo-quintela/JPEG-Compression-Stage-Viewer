@@ -14,6 +14,7 @@ from imgtools import show_img
 from imgtools import converter_to_ycbcr
 from imgtools import add_padding
 from imgtools import create_colormap
+from imgtools import down_sample
 
 from .stoken import Token
 
@@ -234,7 +235,8 @@ def semantic(buffer: List[Token]):
             block_index += 1
             command_index = 0
 
-    decoded_image = None
+    image_channels = None
+    encoded_image = None
 
     # interpretar comandos
     for i, block in enumerate(blocks):
@@ -270,33 +272,90 @@ def semantic(buffer: List[Token]):
                     name = None
 
 
+
+                # separar os canais ycc
                 if "YCC" in command:
 
                     # caso não haja padding
                     if not "PADDING" in command:
                         image, o_width, o_height = add_padding(image, 32)
 
-                    converted_image = converter_to_ycbcr(image)
-                    image = converted_image[channel-1]
+                    encoded_image = converter_to_ycbcr(image)
 
-                    decoded_image = decode(converted_image, o_width, o_height)
+                if "YCC" in command and not "SUBSAMPLE" in command:
+                    # mostrar a imagem
+                    show_img(
+                        encoded_image[channel-1],
+                        colormap,
+                        block[0][0].value,
+                        name,
+                        i+1,
+                        (int(plot_size/2), int(plot_size/2), j+1)
+                        )
 
 
-                if not "YCC" in command and "CHANNEL" in command:
-                    image = separate_channels(image)[channel-1]
+                # dividir a imagem em canais caso nao seja selecionado o YCC
+                if "YCC" not in command and "CHANNEL" in command:
+                    image_channels = separate_channels(image)
 
-                # mostrar a imagem
-                show_img(
-                    image,
-                    colormap,
-                    block[0][0].value,
-                    name,
-                    i+1,
-                    (int(plot_size/2), int(plot_size/2), j+1)
-                    )
+                    # mostrar a imagem
+                    show_img(
+                        image_channels[channel-1],
+                        colormap,
+                        block[0][0].value,
+                        name,
+                        i+1,
+                        (int(plot_size/2), int(plot_size/2), j+1)
+                        )
+                    
 
-    # mostrar a imagem descodificada
-    if decoded_image is not None:
-        show_img(decoded_image, name="Decoded")
+                if "SUBSAMPLE" in command:
+
+                    if "YCC" in command:
+                        encoded_image = down_sample(
+                            encoded_image[0],
+                            encoded_image[1],
+                            encoded_image[2],
+                            command["SUBSAMPLE"]
+                        )
+
+                    else:
+                        encoded_image = down_sample(
+                            image[:,:,0],
+                            image[:,:,1],
+                            image[:,:,2],
+                            command["SUBSAMPLE"]
+                        )
+
+                    # mostrar a imagem
+                    show_img(
+                        encoded_image[channel-1],
+                        colormap,
+                        block[0][0].value,
+                        name,
+                        i+1,
+                        (int(plot_size/2), int(plot_size/2), j+1)
+                        )
+
+
+                # mostrar a imagem com todos os canais
+                if not "YCC" in command and not "COLORMAP" in command:
+                    # mostrar a imagem
+                    show_img(
+                        image,
+                        colormap,
+                        block[0][0].value,
+                        name,
+                        i+1,
+                        (int(plot_size/2), int(plot_size/2), j+1)
+                        )
+
+
+
+    # # mostrar a imagem descodificada
+    # if encoded_image is not None:
+    #     decoded_image = decode(encoded_image, o_width, o_height)
+
+    #     show_img(decoded_image, name="Decoded")
 
     show()

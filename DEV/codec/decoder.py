@@ -9,12 +9,12 @@ from imgtools import restore_padding
 from imgtools import join_channels
 
 
-def decode(data: Tuple[ndarray], width: int, height: int) -> ndarray:
+def decode(data: Tuple[ndarray, ndarray, ndarray], width: int, height: int) -> ndarray:
     """Decodifica a matriz de bytes dada em formato jpeg
     para uma imagem
 
     Args:
-        data (Tuple[ndarray]): A matriz de bytes em formato JPEG
+        data (Tuple[ndarray, ndarray, ndarray]): Os canais da imagem
         width (int): a largura da imagem original
         height (int): a altura da imagem original
 
