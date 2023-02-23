@@ -7,6 +7,7 @@ from imgtools import create_colormap
 from imgtools import show_img
 from imgtools import add_padding
 from imgtools import converter_to_ycbcr
+from imgtools import down_sample
 
 def encode(path: str):
     """Codifica o arquivo de imagem no caminho fornecido para um formato JPEG
@@ -14,9 +15,8 @@ def encode(path: str):
     Args:
         path (str): the path to the file
     """
+    
     close("all")
-
-
     image = read_bmp(path)
 
     # Exercicio 3
@@ -32,31 +32,23 @@ def encode(path: str):
     show_img(image_b, map_b, fig_numb=3, name="Canal azul")
     show_img(image, fig_numb=4, name="Imagem original")
 
-
     # Exercício 4 e 5
 
     image_padded = add_padding(image, 32)[0]
     image_y, image_cb, image_cr = converter_to_ycbcr(image_padded)
-
-    image_ycc = zeros(image_padded.shape, dtype=float64)
-    image_ycc[:,:,0] = image_y
-    image_ycc[:,:,1] = image_cb
-    image_ycc[:,:,2] = image_cr
-
-    image_ycc = npround(image_ycc).astype(uint8)
-
-    image_ycc[image_ycc > 255] = 255
-    image_ycc[image_ycc < 0] = 0
-
-    
 
     map_gr = create_colormap((0,0,0), (1,1,1), "grayscale")
 
     show_img(image_y, map_gr, fig_numb=6, name="Canal luma")
     show_img(image_cb, map_gr, fig_numb=7, name="Canal crominância azul em relação a luma")
     show_img(image_cr, map_gr, fig_numb=8, name="Canal crominância vermenlha em relação a luma")
-    show_img(image_ycc, fig_numb=9, name="Imagem no modelo YCbCr")
 
+    
+    # Exercicio 6
+    y_resized, cb_resized, cr_resized = down_sample(image_y, image_cb, image_cr, (4,2,2))
+    
+    # Exercicio 7
+    
     show()
 
-    return image_ycc, image.shape[0], image.shape[1]
+    return image_y, image_cb, image_cr, image.shape[0], image.shape[1]
