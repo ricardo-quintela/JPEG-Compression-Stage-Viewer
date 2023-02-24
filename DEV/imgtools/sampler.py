@@ -27,19 +27,21 @@ def down_sample(
 
     width, height = channel1.shape
 
-    width_divide_cr = int(scale[0]/scale[1])
-    width_divide_cb = width_divide_cr
-    height_divide_cr = 1
-    height_divide_cb = 1
+    height_divide_cr = int(scale[0]/scale[1])
+    height_divide_cb = height_divide_cr
+    width_divide_cr = 1
+    width_divide_cb = 1
 
     if scale[2] != 0:
-        width_divide_cb = int(scale[0]/scale[2])
+        height_divide_cb = int(scale[0]/scale[2])
     else:
-        height_divide_cr = width_divide_cr
-        height_divide_cb = height_divide_cr
+        width_divide_cr = height_divide_cr
+        width_divide_cb = width_divide_cr
 
     channel2_resized = resize(channel2, (int(height / height_divide_cb), int(width / width_divide_cb)))
     channel3_resized = resize(channel3, (int(height / height_divide_cr), int(width / width_divide_cr)))
+
+    print(channel1.shape, channel2_resized.shape, channel3_resized.shape)
 
     return channel1, channel2_resized, channel3_resized
 

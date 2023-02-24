@@ -356,7 +356,7 @@ class TestImgtoolsSampler(unittest.TestCase):
                 np.ones((32,32), dtype=np.float32),
                 (4,2,1)
             )[1],
-            np.ones((8,32), dtype=np.float32)
+            np.ones((32,8), dtype=np.float32)
         )
     
     def test_scale_cr_421(self):
@@ -371,7 +371,7 @@ class TestImgtoolsSampler(unittest.TestCase):
                 np.ones((32,32), dtype=np.float32),
                 (4,2,1)
             )[2],
-            np.ones((16,32), dtype=np.float32)
+            np.ones((32,16), dtype=np.float32)
         )
     
     def test_scale_y_411(self):
@@ -401,7 +401,7 @@ class TestImgtoolsSampler(unittest.TestCase):
                 np.ones((32,32), dtype=np.float32),
                 (4,1,1)
             )[1],
-            np.ones((8,32), dtype=np.float32)
+            np.ones((32,8), dtype=np.float32)
         )
         
     def test_scale_cr_411(self):
@@ -416,7 +416,7 @@ class TestImgtoolsSampler(unittest.TestCase):
                 np.ones((32,32), dtype=np.float32),
                 (4,1,1)
             )[2],
-            np.ones((8,32), dtype=np.float32)
+            np.ones((32,8), dtype=np.float32)
         )
     
     def test_scale_y_422(self):
@@ -446,7 +446,7 @@ class TestImgtoolsSampler(unittest.TestCase):
                 np.ones((32,32), dtype=np.float32),
                 (4,2,2)
             )[1],
-            np.ones((16,32), dtype=np.float32)
+            np.ones((32,16), dtype=np.float32)
         )
 
 
@@ -462,7 +462,7 @@ class TestImgtoolsSampler(unittest.TestCase):
                 np.ones((32,32), dtype=np.float32),
                 (4,2,2)
             )[2],
-            np.ones((16,32), dtype=np.float32)
+            np.ones((32,16), dtype=np.float32)
         )
 
 
