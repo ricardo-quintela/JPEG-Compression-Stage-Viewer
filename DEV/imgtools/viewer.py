@@ -30,7 +30,7 @@ def show_img(
     if fig_number and sub_plot_config:
         if len(sub_plot_config) != 3:
             print("Subplot config is a wrong format")
-            return
+            return    
 
         figure(fig_number)
         subplot(sub_plot_config[0], sub_plot_config[1], sub_plot_config[2])
@@ -51,14 +51,14 @@ def show_img(
 
     # aplicar um colormap caso seja dado
     if colormap is not None:
-        imshow(img, colormap)
+        imshow(img, colormap, aspect="equal")
 
         if fig_number is None:
             show()
         return
 
     # caso não seja passado colormap
-    imshow(img)
+    imshow(img, aspect="equal")
 
     if fig_number is None:
         show()
