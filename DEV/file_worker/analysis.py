@@ -9,7 +9,7 @@ from matplotlib.pyplot import show
 
 from codec import decode
 from imgtools import read_bmp
-from imgtools import separate_channels
+from imgtools import separate_channels, join_channels
 from imgtools import show_img
 from imgtools import converter_to_ycbcr
 from imgtools import add_padding
@@ -211,6 +211,58 @@ def semantic(buffer: List[Token]):
         buffer (List[Token]): a lista de tokens depois da análise sintática
     """
 
+    # juntar os comandos em blocos
+    blocks = create_blocks(buffer)
+
+    temp_encoded_img = None
+
+    # interpretar comandos
+    for i, block in enumerate(blocks):
+
+        if str(block[0][0]) == "PLOT":
+
+            plot_title = block[0][0].value
+            num_plots = block[0][1]
+
+            # calcular o tamanho do plot para ficar bem formatado na janela
+            if num_plots == 1:
+                plot_size = (1,1)
+            elif num_plots == 2:
+                plot_size = (1,2)
+            else:
+                plot_size = (int((num_plots + num_plots % 2) / 2),2)
+
+            temp_encoded_img = semantic_plot(
+                block[1:],
+                plot_title,
+                plot_size,
+                i+1
+            )
+
+    # mostrar a imagem decodificada
+    if temp_encoded_img is not None:
+        decoded_image = decode(temp_encoded_img[0], temp_encoded_img[1], temp_encoded_img[2])
+
+        show_img(
+            decoded_image,
+            plot_title="Decoded Image"
+        )
+
+    # mostrar todos os plots
+    show()
+
+
+def create_blocks(buffer: List[Token]) -> List[List]:
+    """Junta todos os blocos com os
+    respetivos comandos numa lista de listas
+
+    Args:
+        buffer (List[Token]): a lista de tokens após a análise lexical
+
+    Returns:
+        List[List]: uma lista de listas de blocos
+    """
+
     blocks = list()
 
     block_index = 0
@@ -224,10 +276,9 @@ def semantic(buffer: List[Token]):
         if token != "END":
 
             if token == "IMAGE":
-                blocks[block_index].append({token.name: token.value})
+                blocks[block_index].append(dict())
                 blocks[block_index][0][1] += 1
                 command_index += 1
-                continue
 
             blocks[block_index][command_index][token.name] = token.value
 
@@ -235,127 +286,112 @@ def semantic(buffer: List[Token]):
             block_index += 1
             command_index = 0
 
-    image_channels = None
-    encoded_image = None
-
-    # interpretar comandos
-    for i, block in enumerate(blocks):
-
-        if block[0][0] == "PLOT":
-
-            plot_size = block[0][1]+block[0][1]%2
-
-            for j, command in enumerate(block[1:]):
-                image = read_bmp(command["IMAGE"])
-                if image is None:
-                    print(command["IMAGE"])
-                    return
-
-                if "COLORMAP" in command:
-                    colormap = create_colormap(
-                        command["COLORMAP"][0],
-                        command["COLORMAP"][1],
-                        "colormap"
-                    )
-                    channel = command["CHANNEL"]
-                else:
-                    colormap = None
-
-                # adicionar padding
-                if "PADDING" in command:
-                    image, o_width, o_height = add_padding(image, command["PADDING"])
-
-                # nome do subplot
-                if "NAME" in command:
-                    name = command["NAME"]
-                else:
-                    name = None
+    return blocks
 
 
 
-                # separar os canais ycc
-                if "YCC" in command:
+def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identifier: int):
+    """Interpreta os comandos num bloco "PLOT"
 
-                    # caso não haja padding
-                    if not "PADDING" in command:
-                        image, o_width, o_height = add_padding(image, 32)
+    Args:
+        block (list): a lista de comandos do bloco PLOT
+        plot_title (str): o titulo do plot
+        plot_size (tuple): a configuração de disposição dos plots
+        figure_identifier (int): o identificador da figura
+    """
 
-                    encoded_image = converter_to_ycbcr(image)
+    separated_image = None
 
-                if "YCC" in command and not "SUBSAMPLE" in command:
-                    # mostrar a imagem
-                    show_img(
-                        encoded_image[channel-1],
-                        colormap,
-                        block[0][0].value,
-                        name,
-                        i+1,
-                        (int(plot_size/2), int(plot_size/2), j+1)
-                        )
+    # iterar pelos comandos do bloco
+    for j, command in enumerate(block):
 
+        # ler a imagem
+        image = read_bmp(command["IMAGE"])
+        if image is None:
+            return
 
-                # dividir a imagem em canais caso nao seja selecionado o YCC
-                if "YCC" not in command and "CHANNEL" in command:
-                    image_channels = separate_channels(image)
+        # extrair o canal
+        channel = command["CHANNEL"] - 1 if "CHANNEL" in command else None
 
-                    # mostrar a imagem
-                    show_img(
-                        image_channels[channel-1],
-                        colormap,
-                        block[0][0].value,
-                        name,
-                        i+1,
-                        (int(plot_size/2), int(plot_size/2), j+1)
-                        )
-                    
+        # extrair o colormap e ter em conta erros
+        if "COLORMAP" in command and channel is None:
+            print("Color channel must be selected if a colormap is defined")
+            return
 
-                if "SUBSAMPLE" in command:
+        elif "COLORMAP" not in command:
+            colormap = None
 
-                    if "YCC" in command:
-                        encoded_image = down_sample(
-                            encoded_image[0],
-                            encoded_image[1],
-                            encoded_image[2],
-                            command["SUBSAMPLE"]
-                        )
+        else:
+            colormap = create_colormap(
+                command["COLORMAP"][0],
+                command["COLORMAP"][1]
+            )
 
-                    else:
-                        encoded_image = down_sample(
-                            image[:,:,0],
-                            image[:,:,1],
-                            image[:,:,2],
-                            command["SUBSAMPLE"]
-                        )
+        # adicionar padding à imagem
+        if "PADDING" in command:
+            image, o_width, o_height = add_padding(
+                image, command["PADDING"]
+            )
 
-                    # mostrar a imagem
-                    show_img(
-                        encoded_image[channel-1],
-                        colormap,
-                        block[0][0].value,
-                        name,
-                        i+1,
-                        (int(plot_size/2), int(plot_size/2), j+1)
-                        )
+        # extrair nome do subplot
+        name = command["NAME"] if "NAME" in command else None
 
 
-                # mostrar a imagem com todos os canais
-                if not "YCC" in command and not "COLORMAP" in command:
-                    # mostrar a imagem
-                    show_img(
-                        image,
-                        colormap,
-                        block[0][0].value,
-                        name,
-                        i+1,
-                        (int(plot_size/2), int(plot_size/2), j+1)
-                        )
+        # extrair o colormap e ter em conta erros
+        if "RGB" in command and channel is None:
+            print("Color channel must be selected if RGB color mode is selected")
+            return
+
+        # colormode YCbCr
+        if "RGB" in command:
+            separated_image = separate_channels(image)
 
 
+        # extrair o colormap e ter em conta erros
+        if "YCC" in command and channel is None:
+            print("Color channel must be selected if YCbCr color mode is selected")
+            return
 
-    # # mostrar a imagem descodificada
-    # if encoded_image is not None:
-    #     decoded_image = decode(encoded_image, o_width, o_height)
+        # colormode YCbCr
+        if "YCC" in command:
+            separated_image = converter_to_ycbcr(image)
 
-    #     show_img(decoded_image, name="Decoded")
 
-    show()
+        # extrair o colormap e ter em conta erros
+        if "SUBSAMPLE" in command and channel is None:
+            print("Color channel must be selected if downsampling is selected")
+            return
+
+        # subamostragem
+        if "SUBSAMPLE" in command:
+
+            # caso a imagem ainda não esteja separada
+            if separated_image is None:
+                separated_image = separate_channels(image)
+
+            separated_image = down_sample(
+                separated_image[0],
+                separated_image[1],
+                separated_image[2],
+                command["SUBSAMPLE"]
+            )
+
+
+        # mostrar a imagem
+        if separated_image is not None:
+            image = separated_image[channel]
+
+        show_img(
+            image,
+            colormap,
+            plot_title,
+            name,
+            figure_identifier,
+            (plot_size[0], plot_size[1], j+1)
+        )
+
+    # caso tenham sido aplicados niveis de encoding na image
+    if "YCC" in command and "SUBSAMPLE" in command and "PADDING" in command:
+        return separated_image, o_width, o_height
+    
+    return None

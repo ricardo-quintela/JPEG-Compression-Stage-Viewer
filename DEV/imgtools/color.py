@@ -10,7 +10,7 @@ from numpy import ndarray, zeros, uint8
 def create_colormap(
         first_color: Tuple[float, float, float],
         second_color: Tuple[float, float, float],
-        name:str,
+        name:str = "colormap",
         rgb_quantization: int = 256,
     ) -> LinearSegmentedColormap:
 
@@ -20,7 +20,7 @@ def create_colormap(
     Args:
         first_color (Tuple[float, float, float]): a primeira cor
         second_color (Tuple[float, float, float]): a cor final
-        name (str): o nome do colorido
+        name (str, optional): o nome do colormap. Default a "colormap"
         rgb_quantization (int, optional): os níveis de quantização de RGB. Default a 256.
 
     Returns:
