@@ -301,6 +301,7 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
     """
 
     separated_image = None
+    command = None
 
     # iterar pelos comandos do bloco
     for j, command in enumerate(block):
@@ -391,7 +392,7 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
         )
 
     # caso tenham sido aplicados niveis de encoding na image
-    if "YCC" in command and "SUBSAMPLE" in command and "PADDING" in command:
+    if command is not None and "YCC" in command and "SUBSAMPLE" in command and "PADDING" in command:
         return separated_image, o_width, o_height
     
     return None
