@@ -33,4 +33,4 @@ mult_tp1
 [**Python 3.8**](https://www.python.org/downloads/) ou superior
 
 Bibliotecas:  
-´python -m pip install -r requirements.txt´
+`python -m pip install -r requirements.txt`
