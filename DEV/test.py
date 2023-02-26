@@ -12,6 +12,7 @@ from imgtools import create_colormap, separate_channels, join_channels
 from imgtools import add_padding, restore_padding
 from imgtools import converter_to_rgb, converter_to_ycbcr
 from imgtools import down_sample, up_sample
+from imgtools import calculate_dct, calculate_inv_dct
 
 # file_worker
 from file_worker import read_config
@@ -545,6 +546,32 @@ class TestImgtoolsSampler(unittest.TestCase):
                 np.ones((16, 32), dtype=np.float32),
             )[2],
             np.ones((32, 32), dtype=np.float32),
+        )
+
+
+class TestImgtoolsDct(unittest.TestCase):
+    """testa o modulo Dct do package Imgtools
+    """
+
+    def test_calculate_dct(self):
+        """Testa se a dct é calculada corretamente numa imagem completamente
+        branca no modelo YCbCr em blocos 8x8
+        """
+
+        result_array_y = np.zeros((64,64), dtype=np.float32)
+        result_array_y[0,0] = 2040
+        result_array_cbcr = np.zeros((64,64), dtype=np.float32)
+        result_array_cbcr[0,0] = 1024
+
+        np.testing.assert_array_almost_equal(
+            calculate_dct(
+                np.ones((64,64), dtype=np.float32) * 255,
+                np.ones((64,64), dtype=np.float32) * 128,
+                np.ones((64,64), dtype=np.float32) * 128,
+                8,
+            ),
+            (result_array_y, result_array_cbcr, result_array_cbcr),
+            decimal=0
         )
 
 

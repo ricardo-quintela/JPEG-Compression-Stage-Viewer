@@ -3,7 +3,7 @@ de Coseno Discreta
 """
 
 from typing import Tuple
-from numpy import ndarray, uint8, zeros
+from numpy import ndarray, float32, zeros
 
 from scipy.fftpack import dct, idct
 
@@ -12,8 +12,10 @@ def calculate_dct(
     y_channel: ndarray, cb_channel: ndarray, cr_channel: ndarray, block_size: int = None
 ) -> Tuple[ndarray, ndarray, ndarray]:
     """Calcula a DCT em blocos de um tamanho fornecido\n
-    Caso não seja fornecido é calculada a dct no canal todo
-    Os blocos têm que ser multiplos de 8
+    Caso não seja fornecido é calculada a dct no canal todo\n
+    Os blocos têm que ser multiplos de 8\n\n
+
+    Os canais passados têm que ser uma matriz de valores no intervalo [0, 255]
 
     Args:
         y_channel (ndarray): o canal Y
@@ -30,15 +32,15 @@ def calculate_dct(
         print("Given block size is not a multiple of 8")
         return
 
-    if (y_channel.shape[0] * y_channel.shape[1]) % block_size != 0:
+    if block_size is not None and (y_channel.shape[0] * y_channel.shape[1]) % block_size != 0:
         print("Image channels' shapes are not multiples of the given block size")
         return
 
-    if (cb_channel.shape[0] * cb_channel.shape[1]) % block_size != 0:
+    if block_size is not None and (cb_channel.shape[0] * cb_channel.shape[1]) % block_size != 0:
         print("Image channels' shapes are not multiples of the given block size")
         return
 
-    if (cr_channel.shape[0] * cr_channel.shape[1]) % block_size != 0:
+    if block_size is not None and (cr_channel.shape[0] * cr_channel.shape[1]) % block_size != 0:
         print("Image channels' shapes are not multiples of the given block size")
         return
 
@@ -52,10 +54,10 @@ def calculate_dct(
 
 
     # alocar espaço para os arrays onde a dct vai ser calculada
-    y_dct = zeros(y_channel.shape, dtype=uint8)
-    cb_dct = zeros(cb_channel.shape, dtype=uint8)
-    cr_dct = zeros(cr_channel.shape, dtype=uint8)
-    
+    y_dct = zeros(y_channel.shape, dtype=float32)
+    cb_dct = zeros(cb_channel.shape, dtype=float32)
+    cr_dct = zeros(cr_channel.shape, dtype=float32)
+
     # calcular a dct para o canal Y em blocos de tamanho block_size fornecido
     for i in range(0, y_dct.shape[0], block_size):
         for j in range(0, y_dct.shape[1], block_size):
@@ -115,15 +117,15 @@ def calculate_inv_dct(
         print("Given block size is not a multiple of 8")
         return
 
-    if (y_dct.shape[0] * y_dct.shape[1]) % block_size != 0:
+    if block_size is not None and (y_dct.shape[0] * y_dct.shape[1]) % block_size != 0:
         print("Image channels' shapes are not multiples of the given block size")
         return
 
-    if (cb_dct.shape[0] * cb_dct.shape[1]) % block_size != 0:
+    if block_size is not None and (cb_dct.shape[0] * cb_dct.shape[1]) % block_size != 0:
         print("Image channels' shapes are not multiples of the given block size")
         return
 
-    if (cr_dct.shape[0] * cr_dct.shape[1]) % block_size != 0:
+    if block_size is not None and (cr_dct.shape[0] * cr_dct.shape[1]) % block_size != 0:
         print("Image channels' shapes are not multiples of the given block size")
         return
 
@@ -137,10 +139,10 @@ def calculate_inv_dct(
 
 
     # alocar espaço para os arrays onde a dct vai ser calculada
-    y_channel = zeros(y_dct.shape, dtype=uint8)
-    cb_channel = zeros(cb_dct.shape, dtype=uint8)
-    cr_channel = zeros(cr_dct.shape, dtype=uint8)
-    
+    y_channel = zeros(y_dct.shape, dtype=float32)
+    cb_channel = zeros(cb_dct.shape, dtype=float32)
+    cr_channel = zeros(cr_dct.shape, dtype=float32)
+
     # calcular a dct para o canal Y em blocos de tamanho block_size fornecido
     for i in range(0, y_channel.shape[0], block_size):
         for j in range(0, y_channel.shape[1], block_size):
