@@ -18,3 +18,6 @@ from .converter import converter_to_rgb, converter_to_ycbcr
 
 # sampler
 from .sampler import down_sample, up_sample
+
+# dct
+from .dct import calculate_dct, calculate_inv_dct
