@@ -232,12 +232,15 @@ def semantic(buffer: List[Token]):
             else:
                 plot_size = (int((num_plots + num_plots % 2) / 2),2)
 
-            temp_encoded_img = semantic_plot(
+            encoded_image = semantic_plot(
                 block[1:],
                 plot_title,
                 plot_size,
                 i+1
             )
+
+            if temp_encoded_img is None:
+                temp_encoded_img = encoded_image
 
     # mostrar a imagem decodificada
     if temp_encoded_img is not None:
@@ -394,5 +397,5 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
     # caso tenham sido aplicados niveis de encoding na image
     if command is not None and "YCC" in command and "SUBSAMPLE" in command and "PADDING" in command:
         return separated_image, o_width, o_height
-    
+
     return None

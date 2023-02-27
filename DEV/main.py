@@ -98,6 +98,14 @@ def main():
         type=int
     )
 
+    transformations_group.add_argument(
+        "-s", "--downsample",
+        help="downsample the image by a given set of values {0, 1, 2, 4}",
+        type=int,
+        nargs=3,
+        metavar=""
+    )
+
     args = parser.parse_args()
 
     #  verificar se argumentos são usados com seus parents corretos
@@ -165,6 +173,11 @@ def main():
                 if channels is None:
                     return
 
+            # fazer downsampling da imagem
+            if args.channel and args.downsample is not None:
+                channels = down_sample(channels[0], channels[1], channels[2], args.downsample)
+
+
             # selecionar o canal dependendo da escolha do utilizador
             if args.channel == 1:
                 selected_channel = channels[0]
@@ -172,6 +185,7 @@ def main():
                 selected_channel = channels[1]
             if args.channel == 3:
                 selected_channel = channels[2]
+                
 
             # mostrar a imagem com o colormap
             show_img(selected_channel, colormap, name=name)
