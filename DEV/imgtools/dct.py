@@ -131,9 +131,9 @@ def calculate_inv_dct(
 
     # caso não seja passado um tamanho de bloco
     if block_size is None:
-        y_channel = dct(dct(y_dct, norm="ortho").T, norm="ortho").T
-        cb_channel = dct(dct(cb_dct, norm="ortho").T, norm="ortho").T
-        cr_channel = dct(dct(cr_dct, norm="ortho").T, norm="ortho").T
+        y_channel = idct(idct(y_dct, norm="ortho").T, norm="ortho").T
+        cb_channel = idct(idct(cb_dct, norm="ortho").T, norm="ortho").T
+        cr_channel = idct(idct(cr_dct, norm="ortho").T, norm="ortho").T
 
         return y_channel, cb_channel, cr_channel
 
