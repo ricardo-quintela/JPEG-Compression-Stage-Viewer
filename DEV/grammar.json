@@ -1,64 +1,47 @@
 {
     "PROGRAM": [
         [
-            "PLOT", "IMAGE", "END"
-        ],
-        [
-            "PLOT", "SHOW", "END"
-        ],
-        [
             "PLOT", "COMMAND", "END"
-        ],
-        [
-            "PLOT", "COMMAND_S", "END"
         ],
         [
             "PROGRAM", "PROGRAM"
         ]
     ],
-    "COMMAND_S": [
-        [
-            "COMMAND", "COMMAND"
-        ],
-        [
-            "COMMAND", "COMMAND_S"
-        ]
-    ],
     "COMMAND": [
         [
-            "SHOW", "NAME"
+            "SHOW"
+        ],
+        [
+            "COMMAND", "COMMAND"
         ]
     ],
     "SHOW": [
         [
-            "IMAGE", "MAP"
+            "IMAGE"
         ],
         [
-            "IMAGE", "PADDING"
+            "COMMAND", "COLORMAP"
         ],
         [
-            "IMAGE", "SETTINGS"
-        ]
-    ],
-    "MAP": [
-        [
-            "COLORMAP", "CHANNEL", "YCC"
+            "COMMAND", "CHANNEL"
         ],
         [
-            "COLORMAP", "CHANNEL", "RGB"
-        ]
-    ],
-    "SAMPLING": [
-        [
-            "MAP", "SUBSAMPLE"
-        ]
-    ],
-    "SETTINGS": [
-        [
-            "SAMPLING", "PADDING"
+            "COMMAND", "RGB"
         ],
         [
-            "MAP", "PADDING"
+            "COMMAND", "YCC"
+        ],
+        [
+            "COMMAND", "PADDING"
+        ],
+        [
+            "COMMAND", "NAME"
+        ],
+        [
+            "COMMAND", "SUBSAMPLE"
+        ],
+        [
+            "COMMAND", "DCT"
         ]
     ]
 }

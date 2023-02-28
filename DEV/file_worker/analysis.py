@@ -9,12 +9,13 @@ from matplotlib.pyplot import show
 
 from codec import decode
 from imgtools import read_bmp
-from imgtools import separate_channels, join_channels
+from imgtools import separate_channels
 from imgtools import show_img
 from imgtools import converter_to_ycbcr
 from imgtools import add_padding
 from imgtools import create_colormap
 from imgtools import down_sample
+from imgtools import calculate_dct
 
 from .stoken import Token
 
@@ -46,6 +47,7 @@ def lex(buffer: str) -> List[Token]:
     ycc_matches = finditer(r"-y", buffer)
     rgb_matches = finditer(r"-r", buffer)
     subsample_matches = finditer(r"-s [0-9] [0-9] [0-9]", buffer)
+    dct_matches = finditer(r"-d( [0-9]+)?", buffer)
 
 
     tokens = list()
@@ -134,6 +136,17 @@ def lex(buffer: str) -> List[Token]:
 
         tokens.append(
             Token("SUBSAMPLE", match.start(), value)
+        )
+
+    # tokens DCT
+    for match in dct_matches:
+        if match.group() == "-d":
+            value = None
+        else:
+            value = int(split(r" ", match.group())[1])
+
+        tokens.append(
+            Token("DCT", match.start(), value)
         )
     
     # ordenar os tokens
@@ -305,6 +318,7 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
 
     separated_image = None
     command = None
+    log_correction = False
 
     # iterar pelos comandos do bloco
     for j, command in enumerate(block):
@@ -361,7 +375,7 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
             separated_image = converter_to_ycbcr(image)
 
 
-        # extrair o colormap e ter em conta erros
+        # extrair a subsampling string e ter em conta erros
         if "SUBSAMPLE" in command and channel is None:
             print("Color channel must be selected if downsampling is selected")
             return
@@ -380,6 +394,26 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
                 command["SUBSAMPLE"]
             )
 
+        # extrair o numero de blocos da dct
+        if "DCT" in command and channel is None:
+            print("Color channel must be selected if downsampling is selected")
+            return
+        
+        if "DCT" in command:
+
+            # caso a imagem ainda não esteja separada
+            if separated_image is None:
+                separated_image = separate_channels(image)
+
+            separated_image = calculate_dct(
+                separated_image[0],
+                separated_image[1],
+                separated_image[2],
+                command["DCT"]
+            )
+            log_correction = True
+
+
 
         # mostrar a imagem
         if separated_image is not None:
@@ -391,7 +425,8 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
             plot_title,
             name,
             figure_identifier,
-            (plot_size[0], plot_size[1], j+1)
+            (plot_size[0], plot_size[1], j+1),
+            log_correction
         )
 
     # caso tenham sido aplicados niveis de encoding na image

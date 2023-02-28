@@ -16,7 +16,8 @@ from imgtools import read_bmp
 from imgtools import create_colormap, separate_channels
 from imgtools import converter_to_ycbcr
 from imgtools import add_padding
-from imgtools import down_sample, up_sample
+from imgtools import down_sample
+from imgtools import calculate_dct
 
 from file_worker import lex, synt, semantic, read_config, load_grammar
 
@@ -106,6 +107,13 @@ def main():
         metavar=""
     )
 
+    transformations_group.add_argument(
+        "-d", "--dct",
+        help="calculate the dct of the selected channel",
+        type=int,
+        default=0
+    )
+
     args = parser.parse_args()
 
     #  verificar se argumentos são usados com seus parents corretos
@@ -127,6 +135,12 @@ def main():
         parser.print_usage()
         print(f"{basename(__file__)}: error: invalid RGB color format")
         return
+    
+    # verificação da correção lograítmica
+    if args.dct:
+        log_correction = True
+    else:
+        log_correction = False
 
     # agrupar as cores
     if args.colormap is not None:
@@ -177,6 +191,13 @@ def main():
             if args.channel and args.downsample is not None:
                 channels = down_sample(channels[0], channels[1], channels[2], args.downsample)
 
+            
+            # calcular a dct
+            if args.channel and args.dct is not None:
+                dct_block = None if args.dct == 0 else args.dct
+
+                channels = calculate_dct(channels[0], channels[1], channels[2], dct_block)
+
 
             # selecionar o canal dependendo da escolha do utilizador
             if args.channel == 1:
@@ -188,11 +209,11 @@ def main():
                 
 
             # mostrar a imagem com o colormap
-            show_img(selected_channel, colormap, name=name)
+            show_img(selected_channel, colormap, name=name, log_correction=log_correction)
 
         # mostrar a imagem sem colormap
         else:
-            show_img(image, name=name)
+            show_img(image, name=name, log_correction=log_correction)
 
     if args.config:
         grammar = load_grammar("grammar.json")
