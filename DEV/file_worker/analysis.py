@@ -388,6 +388,11 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
             print("Color channel must be selected if YCbCr color mode is selected")
             return
 
+        # extrair o colormap e ter em conta erros
+        if "YCC" in command and "COLORMAP" not in command:
+            print("Colormap must be defined if YCbCr color mode is selected")
+            return
+
         # colormode YCbCr
         if "YCC" in command:
             separated_image = converter_to_ycbcr(image)
@@ -491,7 +496,7 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
         )
 
     # caso tenham sido aplicados niveis de encoding na image
-    if command is not None and "YCC" in command and "SUBSAMPLE" in command and "PADDING" in command and "DCT" in command and "QUANTIZE" in command:
+    if command is not None and "YCC" in command and "SUBSAMPLE" in command and "PADDING" in command and "DCT" in command and "QUANTIZE" in command and "DPCM" in command:
         return separated_image, o_width, o_height
 
     return None

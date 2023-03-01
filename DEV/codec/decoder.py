@@ -31,16 +31,16 @@ def decode(data: Tuple[ndarray, ndarray, ndarray], width: int, height: int) -> n
     q_matrix_y = load_q_matrix("q_matrix_y.csv")
     q_matrix_cbcr = load_q_matrix("q_matrix_cbcr.csv")
 
-    de_DPCM = (
+    de_dpcm = (
         dpcm_decoder(data[0]),
         dpcm_decoder(data[1]),
         dpcm_decoder(data[2])
     )
     
     de_quantized = (
-        inv_quantize(de_DPCM[0], q_matrix_y),
-        inv_quantize(de_DPCM[1], q_matrix_cbcr),
-        inv_quantize(de_DPCM[2], q_matrix_cbcr)
+        inv_quantize(de_dpcm[0], q_matrix_y),
+        inv_quantize(de_dpcm[1], q_matrix_cbcr),
+        inv_quantize(de_dpcm[2], q_matrix_cbcr)
     )
 
     inv_dct = calculate_inv_dct(

@@ -23,6 +23,8 @@ from imgtools import dpcm_encoder
 
 from file_worker import lex, synt, semantic, read_config, load_grammar, load_q_matrix
 
+from matplotlib.pyplot import close
+
 
 def main():
     """Função principal onde todas as outras serão chamadas
@@ -40,6 +42,10 @@ def main():
     -a PATH -> Ficheiro de config que tem comandos para diferentes plots
     """
 
+    # fechar todos os plots a correr no backend do matplotlib
+    close("all")
+
+    # criar um parser de argumentos da consola
     parser = argparse.ArgumentParser()
 
     # selecionar imagem
@@ -111,9 +117,8 @@ def main():
 
     transformations_group.add_argument(
         "-d", "--dct",
-        help="calculate the dct of the image (must be multiples of 8)",
-        type=int,
-        default=0
+        help="calculate the dct of the image (must be multiples of 8, 0 to apply on the whole channel)",
+        type=int
     )
 
     transformations_group.add_argument(
@@ -198,6 +203,8 @@ def main():
             if not args.ycbcr:
                 # separar os canais
                 channels = separate_channels(image)
+
+                # ocorreu um erro
                 if channels is None:
                     return
 
@@ -205,6 +212,9 @@ def main():
             if args.channel and args.downsample is not None:
                 channels = down_sample(channels[0], channels[1], channels[2], args.downsample)
 
+                # ocorreu um erro
+                if channels is None:
+                    return
 
             # calcular a dct
             if args.channel and args.dct is not None:
@@ -213,8 +223,12 @@ def main():
 
                 channels = calculate_dct(channels[0], channels[1], channels[2], dct_block)
 
+                # ocorreu um erro
+                if channels is None:
+                    return
+
             # quantizar os canais
-            if args.channel and args.dct is not None:
+            if args.channel and args.quantize:
                 q_matrix_y = load_q_matrix("q_matrix_y.csv")
                 q_matrix_cbcr = load_q_matrix("q_matrix_cbcr.csv")
 
@@ -224,17 +238,25 @@ def main():
                     quantize(channels[2], q_matrix_cbcr)
                 )
 
+                # ocorreu um erro
+                if channels[0] is None or channels[1] is None or channels[2] is None:
+                    return
+
                 log_correction = True
 
 
             # codificar os coeficientes DC os canais
-            if args.channel and args.dcpm is not None:
+            if args.channel and args.dcpm:
 
                 channels = (
                     dpcm_encoder(channels[0]),
                     dpcm_encoder(channels[1]),
                     dpcm_encoder(channels[2])
                 )
+
+                # ocorreu um erro
+                if channels[0] is None or channels[1] is None or channels[2] is None:
+                    return
 
                 log_correction = True
 
