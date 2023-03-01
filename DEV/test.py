@@ -12,7 +12,7 @@ from imgtools import create_colormap, separate_channels, join_channels
 from imgtools import add_padding, restore_padding
 from imgtools import converter_to_rgb, converter_to_ycbcr
 from imgtools import down_sample, up_sample
-from imgtools import calculate_dct, calculate_inv_dct
+from imgtools import calculate_dct
 from imgtools import quantize, inv_quantize
 
 # file_worker
@@ -253,7 +253,7 @@ class TestFileworkerReader(unittest.TestCase):
             None
         )
 
-    def test_load_q_matrix_not_found(self):
+    def test_load_q_matrix_folder(self):
         """Testa se a fornecendo um diretório como caminho a função retorna None
         """
         self.assertEqual(load_q_matrix("test/"), None)
