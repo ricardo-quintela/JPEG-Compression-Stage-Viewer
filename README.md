@@ -93,15 +93,18 @@ end
 
 ## Comandos
 
-| Comando | Argumentos                                  | Ação                                                                      |
-| ------- | ------------------------------------------- | ------------------------------------------------------------------------- |
-| `-i`    | PATH                                        | Seleciona uma ficheiro de imagem para utilizar                            |
-| `-m`    | FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT \[0,1\] | Cria um mapa de cor para utilizar na visualização da imagem               |
-| `-c`    | INT {1,2,3}                                 | Seleciona um dos canais da imagem                                         |
-| `-y`    |                                             | Seleciona o modo de cor YcbCr                                             |
-| `-r`    |                                             | Seleciona o modo de cor RGB                                               |
-| `-s`    | INT INT INT {0,1,2,4}                       | Faz a subamostragem dos canais da imagem segundo uma configuração         |
-| `-n`    | STRING                                      | Nome do subplot da imagem                                                 |
-| `-p`    | INT                                         | Adiciona um preenchimento à imagem fornecida                              |
-| `plot`  | STRING                                      | Inicia um bloco de código do tipo `plot` com o nome fornecido na `STRING` |
-| `end`   |                                             | Termina um bloco de código                                                |
+| Comando | Argumentos                                  | Ação                                                                                                  |
+| ------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `-i`    | PATH                                        | Seleciona uma ficheiro de imagem para utilizar                                                        |
+| `-m`    | FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT \[0,1\] | Cria um mapa de cor para utilizar na visualização da imagem                                           |
+| `-c`    | INT {1,2,3}                                 | Seleciona um dos canais da imagem                                                                     |
+| `-y`    |                                             | Seleciona o modo de cor YcbCr                                                                         |
+| `-r`    |                                             | Seleciona o modo de cor RGB                                                                           |
+| `-s`    | INT INT INT {0,1,2,4}                       | Faz a subamostragem dos canais da imagem segundo uma configuração                                     |
+| `-n`    | STRING                                      | Nome do subplot da imagem                                                                             |
+| `-p`    | INT                                         | Adiciona um preenchimento à imagem fornecida                                                          |
+| `-d`    | INT                                         | Calcula a dct em blocos de valor igual ao inteiro fornecido ou na imagem toda caso não seja fornecido |
+| `-q`    |                                             | Quantiza a imagem com as matrizes de quantização                                                      |
+| `-f`    |                                             | Aplica codificação DPCM                                                                               |
+| `plot`  | STRING                                      | Inicia um bloco de código do tipo `plot` com o nome fornecido na `STRING`                             |
+| `end`   |                                             | Termina um bloco de código                                                                            |
