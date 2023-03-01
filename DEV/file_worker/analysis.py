@@ -18,13 +18,11 @@ from imgtools import create_colormap
 from imgtools import down_sample
 from imgtools import calculate_dct
 from imgtools import quantize
-from imgtools import DPCM_encoder
+from imgtools import dpcm_encoder
 
 from .stoken import Token
 from .file_reader import load_q_matrix
 
-from numpy import set_printoptions
-import sys
 
 def lex(buffer: str) -> List[Token]:
     """Cria tokens a partir de expressões regulares
@@ -55,6 +53,7 @@ def lex(buffer: str) -> List[Token]:
     subsample_matches = finditer(r"-s [0-9] [0-9] [0-9]", buffer)
     dct_matches = finditer(r"-d( [0-9]+)?", buffer)
     quantize_matches = finditer(r"-q", buffer)
+    dcpm_matches = finditer(r"-f", buffer)
 
 
     tokens = list()
@@ -160,6 +159,12 @@ def lex(buffer: str) -> List[Token]:
     for match in quantize_matches:
         tokens.append(
             Token("QUANTIZE", match.start())
+        )
+
+    # tokens QUANTIZE
+    for match in dcpm_matches:
+        tokens.append(
+            Token("DCPM", match.start())
         )
 
     # ordenar os tokens
@@ -411,7 +416,7 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
         if "DCT" in command and channel is None:
             print("Color channel must be selected if downsampling is selected")
             return
-        
+
         if "DCT" in command:
 
             # caso a imagem ainda não esteja separada
@@ -431,8 +436,6 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
             print("Color channel must be selected if quantization technique is selected")
             return
 
-        # CHAMADA DA FUNCAO
-        separated_image_2 = None
         if "QUANTIZE" in command:
 
             # caso a imagem ainda não esteja separada
@@ -442,24 +445,37 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
             q_matrix_y = load_q_matrix("q_matrix_y.csv")
             q_matrix_cbcr = load_q_matrix("q_matrix_cbcr.csv")
 
-            set_printoptions(threshold=sys.maxsize)
+
             separated_image = (
                 quantize(separated_image[0], q_matrix_y),
                 quantize(separated_image[1], q_matrix_cbcr),
                 quantize(separated_image[2], q_matrix_cbcr)
             )
-            
-            # CHAMADA DA FUNCAO
             log_correction = True
-            separated_image_2 = (
-                DPCM_encoder(separated_image[0]),
-                DPCM_encoder(separated_image[1]),
-                DPCM_encoder(separated_image[2])
-            )
 
-        if separated_image_2 is not None:
-            image = separated_image_2[channel]
-            
+
+        # codificar os coeficientes DC da imagem e prevenir erros de não ter canal selecionado
+        if "DCPM" in command and channel is None:
+            print("Color channel must be selected if DCPM encoding is selected")
+            return
+
+        if "DCPM" in command:
+
+            # caso a imagem ainda não esteja separada
+            if separated_image is None:
+                separated_image = separate_channels(image)
+
+            # CHAMADA DA FUNCAO
+            separated_image = (
+                dpcm_encoder(separated_image[0]),
+                dpcm_encoder(separated_image[1]),
+                dpcm_encoder(separated_image[2])
+            )
+            log_correction = True
+
+
+
+
         # mostrar a imagem
         if separated_image is not None:
             image = separated_image[channel]

@@ -1,7 +1,7 @@
 """Contém funções para aplicar quantização em imagens
 """
 
-from numpy import ndarray, zeros, int16, float32, round as npround
+from numpy import ndarray, zeros, int16, round as npround
 
 def quantize(
         channel: ndarray,

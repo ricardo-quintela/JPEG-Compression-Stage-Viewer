@@ -45,6 +45,9 @@
         ],
         [
             "COMMAND", "QUANTIZE"
+        ],
+        [
+            "COMMAND", "DCPM"
         ]
     ]
 }

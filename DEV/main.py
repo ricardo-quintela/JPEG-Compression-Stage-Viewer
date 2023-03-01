@@ -19,7 +19,7 @@ from imgtools import add_padding
 from imgtools import down_sample
 from imgtools import calculate_dct
 from imgtools import quantize
-from imgtools import DPCM_encoder
+from imgtools import dpcm_encoder
 
 from file_worker import lex, synt, semantic, read_config, load_grammar, load_q_matrix
 
@@ -111,14 +111,20 @@ def main():
 
     transformations_group.add_argument(
         "-d", "--dct",
-        help="calculate the dct of the selected channel",
+        help="calculate the dct of the image (must be multiples of 8)",
         type=int,
         default=0
     )
 
     transformations_group.add_argument(
         "-q", "--quantize",
-        help="quantize the selected channeç",
+        help="quantize the image",
+        action="store_true"
+    )
+
+    transformations_group.add_argument(
+        "-f", "--dcpm",
+        help="encode the DC coeficients of the image",
         action="store_true"
     )
 
@@ -219,6 +225,19 @@ def main():
                 )
 
                 log_correction = True
+
+
+            # codificar os coeficientes DC os canais
+            if args.channel and args.dcpm is not None:
+
+                channels = (
+                    dpcm_encoder(channels[0]),
+                    dpcm_encoder(channels[1]),
+                    dpcm_encoder(channels[2])
+                )
+
+                log_correction = True
+
 
             # selecionar o canal dependendo da escolha do utilizador
             if args.channel == 1:

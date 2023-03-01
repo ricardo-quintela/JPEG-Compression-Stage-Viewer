@@ -10,7 +10,7 @@ from imgtools import join_channels
 from imgtools import up_sample
 from imgtools import inv_quantize
 from imgtools import calculate_inv_dct
-from imgtools import DPCM_decoder
+from imgtools import dpcm_decoder
 
 from file_worker import load_q_matrix
 
@@ -32,9 +32,9 @@ def decode(data: Tuple[ndarray, ndarray, ndarray], width: int, height: int) -> n
     q_matrix_cbcr = load_q_matrix("q_matrix_cbcr.csv")
 
     de_DPCM = (
-        DPCM_decoder(data[0]),
-        DPCM_decoder(data[1]),
-        DPCM_decoder(data[2])
+        dpcm_decoder(data[0]),
+        dpcm_decoder(data[1]),
+        dpcm_decoder(data[2])
     )
     
     de_quantized = (
