@@ -16,9 +16,14 @@ from imgtools import read_bmp
 from imgtools import create_colormap, separate_channels
 from imgtools import converter_to_ycbcr
 from imgtools import add_padding
-from imgtools import down_sample, up_sample
+from imgtools import down_sample
+from imgtools import calculate_dct
+from imgtools import quantize
+from imgtools import dpcm_encoder
 
-from file_worker import lex, synt, semantic, read_config, load_grammar
+from file_worker import lex, synt, semantic, read_config, load_grammar, load_q_matrix
+
+from matplotlib.pyplot import close
 
 
 def main():
@@ -37,6 +42,10 @@ def main():
     -a PATH -> Ficheiro de config que tem comandos para diferentes plots
     """
 
+    # fechar todos os plots a correr no backend do matplotlib
+    close("all")
+
+    # criar um parser de argumentos da consola
     parser = argparse.ArgumentParser()
 
     # selecionar imagem
@@ -98,6 +107,32 @@ def main():
         type=int
     )
 
+    transformations_group.add_argument(
+        "-s", "--downsample",
+        help="downsample the image by a given set of values {0, 1, 2, 4}",
+        type=int,
+        nargs=3,
+        metavar=""
+    )
+
+    transformations_group.add_argument(
+        "-d", "--dct",
+        help="calculate the dct of the image (must be multiples of 8, 0 to apply on the whole channel)",
+        type=int
+    )
+
+    transformations_group.add_argument(
+        "-q", "--quantize",
+        help="quantize the image",
+        action="store_true"
+    )
+
+    transformations_group.add_argument(
+        "-f", "--dcpm",
+        help="encode the DC coeficients of the image",
+        action="store_true"
+    )
+
     args = parser.parse_args()
 
     #  verificar se argumentos são usados com seus parents corretos
@@ -119,6 +154,12 @@ def main():
         parser.print_usage()
         print(f"{basename(__file__)}: error: invalid RGB color format")
         return
+    
+    # verificação da correção lograítmica
+    if args.dct:
+        log_correction = True
+    else:
+        log_correction = False
 
     # agrupar as cores
     if args.colormap is not None:
@@ -158,22 +199,67 @@ def main():
             # converter a imagem para ycbcr
             if args.ycbcr:
                 channels = converter_to_ycbcr(image)
-                map_gr = create_colormap((0, 0, 0), (1, 1, 1), "grayscale")
-                down_channels = down_sample(
-                    channels[0], channels[1], channels[2], (4, 2, 0))
-                # show_img(down_channels[0], map_gr,fig_number=1, name="down_y")
-                # show_img(down_channels[1], map_gr,fig_number=1, name="down_cb")
-                # show_img(down_channels[2], map_gr,fig_number=1,     name="down_cr")
-                up_channels = up_sample(down_channels[0], down_channels[1], down_channels[2])
-                print(up_channels[0].shape)
-                print(up_channels[1].shape)
-                print(up_channels[2].shape)
 
             if not args.ycbcr:
                 # separar os canais
                 channels = separate_channels(image)
+
+                # ocorreu um erro
                 if channels is None:
                     return
+
+            # fazer downsampling da imagem
+            if args.channel and args.downsample is not None:
+                channels = down_sample(channels[0], channels[1], channels[2], args.downsample)
+
+                # ocorreu um erro
+                if channels is None:
+                    return
+
+            # calcular a dct
+            if args.channel and args.dct is not None:
+                dct_block = None if args.dct == 0 else args.dct
+                log_correction = True
+
+                channels = calculate_dct(channels[0], channels[1], channels[2], dct_block)
+
+                # ocorreu um erro
+                if channels is None:
+                    return
+
+            # quantizar os canais
+            if args.channel and args.quantize:
+                q_matrix_y = load_q_matrix("q_matrix_y.csv")
+                q_matrix_cbcr = load_q_matrix("q_matrix_cbcr.csv")
+
+                channels = (
+                    quantize(channels[0], q_matrix_y),
+                    quantize(channels[1], q_matrix_cbcr),
+                    quantize(channels[2], q_matrix_cbcr)
+                )
+
+                # ocorreu um erro
+                if channels[0] is None or channels[1] is None or channels[2] is None:
+                    return
+
+                log_correction = True
+
+
+            # codificar os coeficientes DC os canais
+            if args.channel and args.dcpm:
+
+                channels = (
+                    dpcm_encoder(channels[0]),
+                    dpcm_encoder(channels[1]),
+                    dpcm_encoder(channels[2])
+                )
+
+                # ocorreu um erro
+                if channels[0] is None or channels[1] is None or channels[2] is None:
+                    return
+
+                log_correction = True
+
 
             # selecionar o canal dependendo da escolha do utilizador
             if args.channel == 1:
@@ -183,13 +269,17 @@ def main():
             if args.channel == 3:
                 selected_channel = channels[2]
 
+
             # mostrar a imagem com o colormap
-            show_img(selected_channel, colormap, name=name)
+            show_img(selected_channel, colormap, name=name, log_correction=log_correction)
+
 
         # mostrar a imagem sem colormap
         else:
-            show_img(image, name=name)
+            show_img(image, name=name, log_correction=log_correction)
 
+
+    # usar um ficheiro de configuração
     if args.config:
         grammar = load_grammar("grammar.json")
         if grammar is None:

@@ -8,15 +8,20 @@ from re import finditer, split, sub
 from matplotlib.pyplot import show
 
 from codec import decode
+
 from imgtools import read_bmp
-from imgtools import separate_channels, join_channels
+from imgtools import separate_channels
 from imgtools import show_img
 from imgtools import converter_to_ycbcr
 from imgtools import add_padding
 from imgtools import create_colormap
 from imgtools import down_sample
+from imgtools import calculate_dct
+from imgtools import quantize
+from imgtools import dpcm_encoder
 
 from .stoken import Token
+from .file_reader import load_q_matrix
 
 
 def lex(buffer: str) -> List[Token]:
@@ -46,6 +51,9 @@ def lex(buffer: str) -> List[Token]:
     ycc_matches = finditer(r"-y", buffer)
     rgb_matches = finditer(r"-r", buffer)
     subsample_matches = finditer(r"-s [0-9] [0-9] [0-9]", buffer)
+    dct_matches = finditer(r"-d( [0-9]+)?", buffer)
+    quantize_matches = finditer(r"-q", buffer)
+    dcpm_matches = finditer(r"-f", buffer)
 
 
     tokens = list()
@@ -135,7 +143,30 @@ def lex(buffer: str) -> List[Token]:
         tokens.append(
             Token("SUBSAMPLE", match.start(), value)
         )
-    
+
+    # tokens DCT
+    for match in dct_matches:
+        if match.group() == "-d":
+            value = None
+        else:
+            value = int(split(r" ", match.group())[1])
+
+        tokens.append(
+            Token("DCT", match.start(), value)
+        )
+
+    # tokens QUANTIZE
+    for match in quantize_matches:
+        tokens.append(
+            Token("QUANTIZE", match.start())
+        )
+
+    # tokens QUANTIZE
+    for match in dcpm_matches:
+        tokens.append(
+            Token("DCPM", match.start())
+        )
+
     # ordenar os tokens
     tokens.sort()
 
@@ -232,12 +263,15 @@ def semantic(buffer: List[Token]):
             else:
                 plot_size = (int((num_plots + num_plots % 2) / 2),2)
 
-            temp_encoded_img = semantic_plot(
+            encoded_image = semantic_plot(
                 block[1:],
                 plot_title,
                 plot_size,
                 i+1
             )
+
+            if temp_encoded_img is None:
+                temp_encoded_img = encoded_image
 
     # mostrar a imagem decodificada
     if temp_encoded_img is not None:
@@ -302,6 +336,7 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
 
     separated_image = None
     command = None
+    log_correction = False
 
     # iterar pelos comandos do bloco
     for j, command in enumerate(block):
@@ -353,12 +388,17 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
             print("Color channel must be selected if YCbCr color mode is selected")
             return
 
+        # extrair o colormap e ter em conta erros
+        if "YCC" in command and "COLORMAP" not in command:
+            print("Colormap must be defined if YCbCr color mode is selected")
+            return
+
         # colormode YCbCr
         if "YCC" in command:
             separated_image = converter_to_ycbcr(image)
 
 
-        # extrair o colormap e ter em conta erros
+        # extrair a subsampling string e ter em conta erros
         if "SUBSAMPLE" in command and channel is None:
             print("Color channel must be selected if downsampling is selected")
             return
@@ -377,6 +417,69 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
                 command["SUBSAMPLE"]
             )
 
+        # extrair o numero de blocos da dct
+        if "DCT" in command and channel is None:
+            print("Color channel must be selected if downsampling is selected")
+            return
+
+        if "DCT" in command:
+
+            # caso a imagem ainda não esteja separada
+            if separated_image is None:
+                separated_image = separate_channels(image)
+
+            separated_image = calculate_dct(
+                separated_image[0],
+                separated_image[1],
+                separated_image[2],
+                command["DCT"]
+            )
+            log_correction = True
+
+        # quantizar a imagem e prevenir erros de não ter canal selecionado
+        if "QUANTIZE" in command and channel is None:
+            print("Color channel must be selected if quantization technique is selected")
+            return
+
+        if "QUANTIZE" in command:
+
+            # caso a imagem ainda não esteja separada
+            if separated_image is None:
+                separated_image = separate_channels(image)
+
+            q_matrix_y = load_q_matrix("q_matrix_y.csv")
+            q_matrix_cbcr = load_q_matrix("q_matrix_cbcr.csv")
+
+
+            separated_image = (
+                quantize(separated_image[0], q_matrix_y),
+                quantize(separated_image[1], q_matrix_cbcr),
+                quantize(separated_image[2], q_matrix_cbcr)
+            )
+            log_correction = True
+
+
+        # codificar os coeficientes DC da imagem e prevenir erros de não ter canal selecionado
+        if "DCPM" in command and channel is None:
+            print("Color channel must be selected if DCPM encoding is selected")
+            return
+
+        if "DCPM" in command:
+
+            # caso a imagem ainda não esteja separada
+            if separated_image is None:
+                separated_image = separate_channels(image)
+
+            # CHAMADA DA FUNCAO
+            separated_image = (
+                dpcm_encoder(separated_image[0]),
+                dpcm_encoder(separated_image[1]),
+                dpcm_encoder(separated_image[2])
+            )
+            log_correction = True
+
+
+
 
         # mostrar a imagem
         if separated_image is not None:
@@ -388,11 +491,12 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
             plot_title,
             name,
             figure_identifier,
-            (plot_size[0], plot_size[1], j+1)
+            (plot_size[0], plot_size[1], j+1),
+            log_correction
         )
 
     # caso tenham sido aplicados niveis de encoding na image
-    if command is not None and "YCC" in command and "SUBSAMPLE" in command and "PADDING" in command:
+    if command is not None and "YCC" in command and "SUBSAMPLE" in command and "PADDING" in command and "DCT" in command and "QUANTIZE" in command and "DPCM" in command:
         return separated_image, o_width, o_height
-    
+
     return None

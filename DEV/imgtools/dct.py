@@ -3,116 +3,178 @@ de Coseno Discreta
 """
 
 from typing import Tuple
-from numpy import ndarray, zeros, r_
+from numpy import ndarray, float32, zeros
 
 from scipy.fftpack import dct, idct
 
 
 def calculate_dct(
-        Y_channel: ndarray,
-        Cb_channel: ndarray,
-        Cr_channel: ndarray
+    y_channel: ndarray, cb_channel: ndarray, cr_channel: ndarray, block_size: int = None
 ) -> Tuple[ndarray, ndarray, ndarray]:
-    """Calcula a DCT de um canal completo
+    """Calcula a DCT em blocos de um tamanho fornecido\n
+    Caso não seja fornecido é calculada a dct no canal todo\n
+    Os blocos têm que ser multiplos de 8\n\n
+
+    Os canais passados têm que ser uma matriz de valores no intervalo [0, 255]
 
     Args:
-        Y_channel (ndarray): o canal Y
-        Cb_channel (ndarray): o canal cb
-        Cr_channel (ndarray): o canal cr
+        y_channel (ndarray): o canal Y
+        cb_channel (ndarray): o canal cb
+        cr_channel (ndarray): o canal cr
+        block_size (int, optional): o tamanho dos blocos em que a
+        dct vai ser calculada. Default a None.
 
     Returns:
-        Tuple[ndarray, ndarray, ndarray]: os canais com a DCT calculada 
+        Tuple[ndarray, ndarray, ndarray]: os canais com a DCT calculada
     """
 
-    Y_dct = dct(dct(Y_channel, norm="ortho").T, norm="ortho").T
-    Cb_dct = dct(dct(Cb_channel, norm="ortho").T, norm="ortho").T
-    Cr_dct = dct(dct(Cr_channel, norm="ortho").T, norm="ortho").T
+    if block_size is not None and block_size % 8 != 0:
+        print("Given block size is not a multiple of 8")
+        return
 
-    return Y_dct, Cb_dct, Cr_dct
+    if block_size is not None and (y_channel.shape[0] * y_channel.shape[1]) % block_size != 0:
+        print("Image channels' shapes are not multiples of the given block size")
+        return
+
+    if block_size is not None and (cb_channel.shape[0] * cb_channel.shape[1]) % block_size != 0:
+        print("Image channels' shapes are not multiples of the given block size")
+        return
+
+    if block_size is not None and (cr_channel.shape[0] * cr_channel.shape[1]) % block_size != 0:
+        print("Image channels' shapes are not multiples of the given block size")
+        return
+
+    # caso não seja passado um tamanho de bloco
+    if block_size is None:
+        y_dct = dct(dct(y_channel, norm="ortho").T, norm="ortho").T
+        cb_dct = dct(dct(cb_channel, norm="ortho").T, norm="ortho").T
+        cr_dct = dct(dct(cr_channel, norm="ortho").T, norm="ortho").T
+
+        return y_dct, cb_dct, cr_dct
+
+
+    # alocar espaço para os arrays onde a dct vai ser calculada
+    y_dct = zeros(y_channel.shape, dtype=float32)
+    cb_dct = zeros(cb_channel.shape, dtype=float32)
+    cr_dct = zeros(cr_channel.shape, dtype=float32)
+
+    # calcular a dct para o canal Y em blocos de tamanho block_size fornecido
+    for i in range(0, y_dct.shape[0], block_size):
+        for j in range(0, y_dct.shape[1], block_size):
+            y_dct[i:i+block_size, j:j+block_size] = dct(
+                dct(
+                    y_channel[i:i+block_size, j:j+block_size],
+                    norm="ortho"
+                ).T,
+                norm="ortho"
+            ).T
+
+    # calcular a dct para o canal Y em blocos de tamanho block_size fornecido
+    for i in range(0, cb_dct.shape[0], block_size):
+        for j in range(0, cb_dct.shape[1], block_size):
+            cb_dct[i:i+block_size, j:j+block_size] = dct(
+                dct(
+                    cb_channel[i:i+block_size, j:j+block_size],
+                    norm="ortho"
+                ).T,
+                norm="ortho"
+            ).T
+
+    # calcular a dct para o canal Y em blocos de tamanho block_size fornecido
+    for i in range(0, cr_dct.shape[0], block_size):
+        for j in range(0, cr_dct.shape[1], block_size):
+            cr_dct[i:i+block_size, j:j+block_size] = dct(
+                dct(
+                    cr_channel[i:i+block_size, j:j+block_size],
+                    norm="ortho"
+                ).T,
+                norm="ortho"
+            ).T
+
+
+    return y_dct, cb_dct, cr_dct
 
 
 def calculate_inv_dct(
-        Y_dct: ndarray,
-        Cb_dct: ndarray,
-        Cr_dct: ndarray
+    y_dct: ndarray, cb_dct: ndarray, cr_dct: ndarray, block_size: int = None
 ) -> Tuple[ndarray, ndarray, ndarray]:
-    """Calcula o inverso da DCT de um canal completo
+    """Calcula a inversa da DCT em blocos de um tamanho fornecido\n
+    Caso não seja fornecido é calculada a inversa da dct no canal todo
+    Os blocos têm que ser multiplos de 8
 
     Args:
-        Y_dct (ndarray): o canal Y com a dct
-        Cb_dct (ndarray): o canal Cb com a dct
-        Cr_dct (ndarray): o canal Cr com a dct
-
+        y_dct (ndarray): o canal Y com a dct calculada
+        cb_dct (ndarray): o canal Cb com a dct calculada
+        cr_dct (ndarray): o canal Cr com a dct calculada
+        block_size (int): o tamanho dos blocos em que a
+        dct foi calculada anteriormente
+        
     Returns:
         Tuple[ndarray, ndarray, ndarray]: os canais originais (sem a dct)
     """
 
-    Y_channel = idct(idct(Y_dct, norm="ortho").T, norm="ortho").T
-    Cb_channel = idct(idct(Cb_dct, norm="ortho").T, norm="ortho").T
-    Cr_channel = idct(idct(Cr_dct, norm="ortho").T, norm="ortho").T
+    if block_size is not None and block_size % 8 != 0:
+        print("Given block size is not a multiple of 8")
+        return
 
-    return Y_channel, Cb_channel, Cr_channel
+    if block_size is not None and (y_dct.shape[0] * y_dct.shape[1]) % block_size != 0:
+        print("Image channels' shapes are not multiples of the given block size")
+        return
 
+    if block_size is not None and (cb_dct.shape[0] * cb_dct.shape[1]) % block_size != 0:
+        print("Image channels' shapes are not multiples of the given block size")
+        return
 
-def calculate_dct_8x8(
-        Y_channel: ndarray,
-        Cb_channel: ndarray,
-        Cr_channel: ndarray
-) -> Tuple[ndarray, ndarray, ndarray]:
-    """Calcula a DCT em blocos 8x8 de um canal completo
+    if block_size is not None and (cr_dct.shape[0] * cr_dct.shape[1]) % block_size != 0:
+        print("Image channels' shapes are not multiples of the given block size")
+        return
 
-    Args:
-        Y_channel (ndarray): o canal Y
-        Cb_channel (ndarray): o canal Cb
-        Cr_channel (ndarray): o canal Cr
+    # caso não seja passado um tamanho de bloco
+    if block_size is None:
+        y_channel = idct(idct(y_dct, norm="ortho").T, norm="ortho").T
+        cb_channel = idct(idct(cb_dct, norm="ortho").T, norm="ortho").T
+        cr_channel = idct(idct(cr_dct, norm="ortho").T, norm="ortho").T
 
-    Returns:
-        Tuple[ndarray, ndarray, ndarray]: os canais com a DCT em blocos 8x8 calculada     
-    """
-
-    size = Y_channel.shape
-    Y_DCT8 = zeros(size)
-    Cb_DCT8 = zeros(size)
-    Cr_DCT8 = zeros(size)
-
-    for i in r_[:size[0]:8]:
-        for j in r_[:size[1]:8]:
-            Y_DCT8[i:(i+8), j:(j+8)],
-            Cb_DCT8[i:(i+8), j:(j+8)],
-            Cr_DCT8[i:(i+8), j:(j+8)] = calculate_dct(Y_channel[i:(i+8), j:(j+8)],
-                                                      Cb_channel[i:(
-                                                          i+8), j:(j+8)],
-                                                      Cr_channel[i:(i+8), j:(j+8)])
-
-    return Y_DCT8, Cb_DCT8, Cr_DCT8
+        return y_channel, cb_channel, cr_channel
 
 
-def calculate_inv_dct_8x8(
-        Y_DCT8: ndarray,
-        Cb_DCT8: ndarray,
-        Cr_DCT8: ndarray
-) -> Tuple[ndarray, ndarray, ndarray]:
-    """Calcula o inverso da DCT em blocos 8x8 de um canal completo
+    # alocar espaço para os arrays onde a dct vai ser calculada
+    y_channel = zeros(y_dct.shape, dtype=float32)
+    cb_channel = zeros(cb_dct.shape, dtype=float32)
+    cr_channel = zeros(cr_dct.shape, dtype=float32)
 
-    Args:
-        Y_DCT8 (ndarray): o canal Y
-        Cb_DCT8 (ndarray): o canal cb
-        Cr_DCT8 (ndarray): o canal cr
+    # calcular a dct para o canal Y em blocos de tamanho block_size fornecido
+    for i in range(0, y_channel.shape[0], block_size):
+        for j in range(0, y_channel.shape[1], block_size):
+            y_channel[i:i+block_size, j:j+block_size] = idct(
+                idct(
+                    y_dct[i:i+block_size, j:j+block_size],
+                    norm="ortho"
+                ).T,
+                norm="ortho"
+            ).T
 
-    Returns:
-        Tuple[ndarray, ndarray, ndarray]: os canais originais (sem a dct 8x8)
-    """
+    # calcular a dct para o canal Y em blocos de tamanho block_size fornecido
+    for i in range(0, cb_channel.shape[0], block_size):
+        for j in range(0, cb_channel.shape[1], block_size):
+            cb_channel[i:i+block_size, j:j+block_size] = idct(
+                idct(
+                    cb_dct[i:i+block_size, j:j+block_size],
+                    norm="ortho"
+                ).T,
+                norm="ortho"
+            ).T
 
-    size = Y_DCT8.shape
-    Y_channel = zeros(size)
-    Cb_channel = zeros(size)
-    Cr_channel = zeros(size)
+    # calcular a dct para o canal Y em blocos de tamanho block_size fornecido
+    for i in range(0, cr_channel.shape[0], block_size):
+        for j in range(0, cr_channel.shape[1], block_size):
+            cr_channel[i:i+block_size, j:j+block_size] = idct(
+                idct(
+                    cr_dct[i:i+block_size, j:j+block_size],
+                    norm="ortho"
+                ).T,
+                norm="ortho"
+            ).T
 
-    for i in r_[:size[0]:8]:
-        for j in r_[:size[1]:8]:
-            Y_DCT8[i:(i+8), j:(j+8)],
-            Cb_channel[i:(i+8), j:(j+8)],
-            Cr_channel[i:(i+8), j:(j+8)] = calculate_inv_dct(Y_DCT8[i:(i+8), j:(j+8)],
-                                                             Cb_DCT8[i:(i+8), j:(j+8)], Cr_DCT8[i:(i+8), j:(j+8)])
 
-    return Y_channel, Cb_channel, Cr_channel
+    return y_channel, cb_channel, cr_channel

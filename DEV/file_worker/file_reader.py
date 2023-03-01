@@ -5,6 +5,7 @@ de configuração
 from os.path import isdir
 from json import loads
 from json.decoder import JSONDecodeError
+from numpy import loadtxt, uint8, ndarray
 
 def read_config(path: str) -> str:
     """Lê um ficheiro de configuração
@@ -18,12 +19,12 @@ def read_config(path: str) -> str:
 
     # não é um ficheiro
     if isdir(path):
-        print("Given path is not a file")
+        print(f"{path} is not a file")
         return
 
     # extensão errada
     if not path.endswith(".cfg"):
-        print("Given file is not a configuration file")
+        print(f"File at {path} is not a configuration file")
 
     # ler o ficheiro
     try:
@@ -32,14 +33,14 @@ def read_config(path: str) -> str:
 
     # ficheiro não existe
     except FileNotFoundError:
-        print("Given file does not exist")
+        print(f"File at {path} does not exist")
         return
 
     # ocorreu outro erro
     except IOError:
-        print("An error has occured while opening the file")
+        print(f"An error has occured while reading the file at {path}")
         return
-    
+
 
 def load_grammar(path: str) -> dict:
     """Lê um ficheiro de JSON contedo a gramática do parser
@@ -53,12 +54,12 @@ def load_grammar(path: str) -> dict:
 
     # não é um ficheiro
     if isdir(path):
-        print("Given path is not a file")
+        print(f"{path} is not a file")
         return
 
     # extensão errada
     if not path.endswith(".json"):
-        print("Given file is not a JSON file")
+        print(f"File at {path} is not a JSON file")
 
     # ler o ficheiro
     try:
@@ -66,15 +67,52 @@ def load_grammar(path: str) -> dict:
             return loads(conf_file.read())
 
     except JSONDecodeError:
-        print("An erros has occured while loading the grammar")
+        print("An error has occured while loading the grammar")
         return
 
     # ficheiro não existe
     except FileNotFoundError:
-        print("Given file does not exist")
+        print(f"File at {path} does not exist")
         return
 
     # ocorreu outro erro
     except IOError:
-        print("An error has occured while reading the grammar file")
+        print(f"An error has occured while reading the grammar file at {path}")
+        return
+
+
+def load_q_matrix(path: str) -> ndarray:
+    """Lê um ficheiro csv e carrega uma matriz de quantização
+
+    Args:
+        path (str): o caminho do ficheiro que contém a matriz de quantização
+
+    Returns:
+        ndarray: uma matriz de quantização
+    """
+
+    # não é um ficheiro
+    if isdir(path):
+        print(f"{path} is not a file")
+        return
+
+    # extensão errada
+    if not path.endswith(".csv"):
+        print(f"File at {path} is not a CSV file")
+
+    # ler o ficheiro
+    try:
+        return loadtxt(path, dtype=uint8, delimiter=",")
+
+    except ValueError:
+        print(f"Could not load quantization matrix from file at {path}")
+
+    # ficheiro não existe
+    except FileNotFoundError:
+        print(f"File at {path} does not exist")
+        return
+
+    # ocorreu outro erro
+    except IOError:
+        print(f"An error has occured while reading the file at {path}")
         return

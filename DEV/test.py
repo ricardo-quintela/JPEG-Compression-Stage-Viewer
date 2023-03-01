@@ -12,9 +12,11 @@ from imgtools import create_colormap, separate_channels, join_channels
 from imgtools import add_padding, restore_padding
 from imgtools import converter_to_rgb, converter_to_ycbcr
 from imgtools import down_sample, up_sample
+from imgtools import calculate_dct
+from imgtools import quantize, inv_quantize
 
 # file_worker
-from file_worker import read_config
+from file_worker import read_config, load_q_matrix
 from file_worker import Token
 from file_worker import lex
 
@@ -223,10 +225,38 @@ class TestFileworkerReader(unittest.TestCase):
         self.assertEqual(read_config("test/test_config.txt"), None)
 
     def test_read_config_file_not_found(self):
-        """Testa se fornecendo um ficheiro que não está no formato
-        cfg a função retorna None
+        """Testa se fornecendo um ficheiro que não exista
         """
         self.assertEqual(read_config("test/test_configNOT.cfg"), None)
+
+    def test_load_q_matrix(self):
+        """Testa se é possível criar uma matriz a partir de um ficheiro csv
+        """
+        np.testing.assert_array_equal(
+            load_q_matrix("test/test_q_matrix.csv"),
+            np.array([[1,2,3], [4,5,6]], dtype=np.uint8)
+        )
+
+    def test_load_q_matrix_not_csv(self):
+        """Testa se a função retorna None caso não seja passado um ficheiro csv
+        """
+        self.assertEqual(
+            load_q_matrix("test/test_q_matrix.txt"),
+            None
+        )
+
+    def test_load_q_matrix_not_found(self):
+        """Testa se a função retorna None caso o ficheiro não exista
+        """
+        self.assertEqual(
+            load_q_matrix("test/test_configNOT.csv"),
+            None
+        )
+
+    def test_load_q_matrix_folder(self):
+        """Testa se a fornecendo um diretório como caminho a função retorna None
+        """
+        self.assertEqual(load_q_matrix("test/"), None)
 
 
 class TestFileworkerToken(unittest.TestCase):
@@ -255,8 +285,8 @@ class TestFileworkerToken(unittest.TestCase):
         )
 
 
-class TestFileworkerFileParser(unittest.TestCase):
-    """Testa o modulo file parser do package file worker"""
+class TestFileworkerAnalisys(unittest.TestCase):
+    """Testa o modulo analisys do package file worker"""
 
     def test_lex(self):
         """Testa se são apanhados os tokens corretamente"""
@@ -545,6 +575,62 @@ class TestImgtoolsSampler(unittest.TestCase):
                 np.ones((16, 32), dtype=np.float32),
             )[2],
             np.ones((32, 32), dtype=np.float32),
+        )
+
+
+class TestImgtoolsDct(unittest.TestCase):
+    """testa o modulo Dct do package Imgtools
+    """
+
+    def test_calculate_dct(self):
+        """Testa se a dct é calculada corretamente numa imagem completamente
+        branca no modelo YCbCr em blocos 8x8
+        """
+
+        result_array_y = np.zeros((64,64), dtype=np.float32)
+        result_array_y[0,0] = 2040
+        result_array_cbcr = np.zeros((64,64), dtype=np.float32)
+        result_array_cbcr[0,0] = 1024
+
+        np.testing.assert_array_almost_equal(
+            calculate_dct(
+                np.ones((64,64), dtype=np.float32) * 255,
+                np.ones((64,64), dtype=np.float32) * 128,
+                np.ones((64,64), dtype=np.float32) * 128,
+                8,
+            ),
+            (result_array_y, result_array_cbcr, result_array_cbcr),
+            decimal=0
+        )
+
+
+class TestImgtoolsQuantization(unittest.TestCase):
+    """Testa o módulo quantization do package imgtools
+    """
+
+    def test_quantize(self):
+        """Testa se é possivel quantizar uma matriz corretamente
+        """
+        np.testing.assert_array_equal(
+            quantize(
+                np.ones((8,8), dtype=np.float32) * 8,
+                np.ones((8,8), dtype=np.float32) * 8
+            ),
+            np.ones((8,8), dtype=np.uint8)
+        )
+
+    
+
+    def test_inv_quantize(self):
+        """Testa se é possivel reverter a quantização de
+        uma matriz corretamente
+        """
+        np.testing.assert_array_equal(
+            inv_quantize(
+                np.ones((8,8), dtype=np.float32),
+                np.ones((8,8), dtype=np.float32) * 8
+            ),
+            np.ones((8,8), dtype=np.uint8) * 8
         )
 
 
