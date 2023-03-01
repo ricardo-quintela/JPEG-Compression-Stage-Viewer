@@ -88,6 +88,7 @@ end
 plot Original
 -i "img/barn_mountains.bmp"
 end
+
 ```
 
 ## Comandos
@@ -104,31 +105,3 @@ end
 | `-p`    | INT                                         | Adiciona um preenchimento à imagem fornecida                              |
 | `plot`  | STRING                                      | Inicia um bloco de código do tipo `plot` com o nome fornecido na `STRING` |
 | `end`   |                                             | Termina um bloco de código                                                |
-
-
-## Gramática
-
-```
-PROGRAM -> PLOT IMAGE END
-         | PLOT SHOW END
-         | PLOT COMMAND END
-         | PLOT COMMAND_S END
-         | PROGRAM PROGRAM
-
-COMMAND_S -> COMMAND COMMAND
-           | COMMAND COMMAND_S
-
-COMMAND -> SHOW NAME
-
-SHOW -> IMAGE MAP
-      | IMAGE PADDING
-      | IMAGE SETTINGS
-
-MAP -> COLORMAP CHANNEL YCC
-     | COLORMAP CHANNEL RGB
-
-SAMPLING -> MAP SUBSAMPLE
-
-SETTINGS -> SAMPLING PADDING
-          | MAP PADDING
-```
