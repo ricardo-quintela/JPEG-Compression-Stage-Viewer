@@ -8,6 +8,7 @@ from re import finditer, split, sub
 from matplotlib.pyplot import show
 
 from codec import decode
+
 from imgtools import read_bmp
 from imgtools import separate_channels
 from imgtools import show_img
@@ -16,8 +17,10 @@ from imgtools import add_padding
 from imgtools import create_colormap
 from imgtools import down_sample
 from imgtools import calculate_dct
+from imgtools import quantize
 
 from .stoken import Token
+from .file_reader import load_q_matrix
 
 
 def lex(buffer: str) -> List[Token]:
@@ -48,6 +51,7 @@ def lex(buffer: str) -> List[Token]:
     rgb_matches = finditer(r"-r", buffer)
     subsample_matches = finditer(r"-s [0-9] [0-9] [0-9]", buffer)
     dct_matches = finditer(r"-d( [0-9]+)?", buffer)
+    quantize_matches = finditer(r"-q", buffer)
 
 
     tokens = list()
@@ -148,7 +152,13 @@ def lex(buffer: str) -> List[Token]:
         tokens.append(
             Token("DCT", match.start(), value)
         )
-    
+
+    # tokens QUANTIZE
+    for match in quantize_matches:
+        tokens.append(
+            Token("QUANTIZE", match.start())
+        )
+
     # ordenar os tokens
     tokens.sort()
 
@@ -413,6 +423,28 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
             )
             log_correction = True
 
+        # quantizar a imagem e prevenir erros de não ter canal selecionado
+        if "QUANTIZE" in command and channel is None:
+            print("Color channel must be selected if quantization technique is selected")
+            return
+
+        if "QUANTIZE" in command:
+
+            # caso a imagem ainda não esteja separada
+            if separated_image is None:
+                separated_image = separate_channels(image)
+
+            q_matrix_y = load_q_matrix("q_matrix_y.csv")
+            q_matrix_cbcr = load_q_matrix("q_matrix_cbcr.csv")
+
+            separated_image = (
+                quantize(separated_image[0], q_matrix_y),
+                quantize(separated_image[1], q_matrix_cbcr),
+                quantize(separated_image[2], q_matrix_cbcr)
+            )
+
+            log_correction = True
+
 
 
         # mostrar a imagem
@@ -430,7 +462,7 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
         )
 
     # caso tenham sido aplicados niveis de encoding na image
-    if command is not None and "YCC" in command and "SUBSAMPLE" in command and "PADDING" in command:
+    if command is not None and "YCC" in command and "SUBSAMPLE" in command and "PADDING" in command and "DCT" in command and "QUANTIZE" in command:
         return separated_image, o_width, o_height
 
     return None

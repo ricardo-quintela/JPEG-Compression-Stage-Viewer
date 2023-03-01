@@ -42,6 +42,9 @@
         ],
         [
             "COMMAND", "DCT"
+        ],
+        [
+            "COMMAND", "QUANTIZE"
         ]
     ]
 }

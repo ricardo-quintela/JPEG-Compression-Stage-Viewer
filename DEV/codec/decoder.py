@@ -8,6 +8,10 @@ from imgtools import converter_to_rgb
 from imgtools import restore_padding
 from imgtools import join_channels
 from imgtools import up_sample
+from imgtools import inv_quantize
+from imgtools import calculate_inv_dct
+
+from file_worker import load_q_matrix
 
 
 def decode(data: Tuple[ndarray, ndarray, ndarray], width: int, height: int) -> ndarray:
@@ -23,7 +27,23 @@ def decode(data: Tuple[ndarray, ndarray, ndarray], width: int, height: int) -> n
         ndarray: a imagem descodificada
     """
 
-    up_sampled = up_sample(data[0], data[1], data[2])
+    q_matrix_y = load_q_matrix("q_matrix_y.csv")
+    q_matrix_cbcr = load_q_matrix("q_matrix_cbcr.csv")
+
+    de_quantized = (
+        inv_quantize(data[0], q_matrix_y),
+        inv_quantize(data[1], q_matrix_cbcr),
+        inv_quantize(data[2], q_matrix_cbcr)
+    )
+
+    inv_dct = calculate_inv_dct(
+        de_quantized[0],
+        de_quantized[1],
+        de_quantized[2],
+        8
+    )
+
+    up_sampled = up_sample(inv_dct[0], inv_dct[1], inv_dct[2])
 
     image_r, image_g, image_b = converter_to_rgb(up_sampled[0], up_sampled[1], up_sampled[2])
 

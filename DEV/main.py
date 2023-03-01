@@ -18,8 +18,9 @@ from imgtools import converter_to_ycbcr
 from imgtools import add_padding
 from imgtools import down_sample
 from imgtools import calculate_dct
+from imgtools import quantize
 
-from file_worker import lex, synt, semantic, read_config, load_grammar
+from file_worker import lex, synt, semantic, read_config, load_grammar, load_q_matrix
 
 
 def main():
@@ -114,6 +115,12 @@ def main():
         default=0
     )
 
+    transformations_group.add_argument(
+        "-q", "--quantize",
+        help="quantize the selected channeç",
+        action="store_true"
+    )
+
     args = parser.parse_args()
 
     #  verificar se argumentos são usados com seus parents corretos
@@ -191,13 +198,26 @@ def main():
             if args.channel and args.downsample is not None:
                 channels = down_sample(channels[0], channels[1], channels[2], args.downsample)
 
-            
+
             # calcular a dct
             if args.channel and args.dct is not None:
                 dct_block = None if args.dct == 0 else args.dct
+                log_correction = True
 
                 channels = calculate_dct(channels[0], channels[1], channels[2], dct_block)
 
+            # quantizar os canais
+            if args.channel and args.dct is not None:
+                q_matrix_y = load_q_matrix("q_matrix_y.csv")
+                q_matrix_cbcr = load_q_matrix("q_matrix_cbcr.csv")
+
+                channels = (
+                    quantize(channels[0], q_matrix_y),
+                    quantize(channels[1], q_matrix_cbcr),
+                    quantize(channels[2], q_matrix_cbcr)
+                )
+
+                log_correction = True
 
             # selecionar o canal dependendo da escolha do utilizador
             if args.channel == 1:
@@ -206,7 +226,7 @@ def main():
                 selected_channel = channels[1]
             if args.channel == 3:
                 selected_channel = channels[2]
-                
+
 
             # mostrar a imagem com o colormap
             show_img(selected_channel, colormap, name=name, log_correction=log_correction)
@@ -215,6 +235,8 @@ def main():
         else:
             show_img(image, name=name, log_correction=log_correction)
 
+
+    # usar um ficheiro de configuração
     if args.config:
         grammar = load_grammar("grammar.json")
         if grammar is None:
