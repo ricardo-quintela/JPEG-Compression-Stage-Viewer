@@ -94,5 +94,5 @@ def inv_quantize(
     for i in range(0, channel.shape[0], 8):
         for j in range(0, channel.shape[1], 8):
             channel[i:i+8, j:j+8] = ch_quantized[i:i+8, j:j+8] * q_matrix
-
+            
     return channel

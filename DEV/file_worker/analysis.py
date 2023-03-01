@@ -18,10 +18,13 @@ from imgtools import create_colormap
 from imgtools import down_sample
 from imgtools import calculate_dct
 from imgtools import quantize
+from imgtools import DPCM_encoder
 
 from .stoken import Token
 from .file_reader import load_q_matrix
 
+from numpy import set_printoptions
+import sys
 
 def lex(buffer: str) -> List[Token]:
     """Cria tokens a partir de expressões regulares
@@ -428,6 +431,8 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
             print("Color channel must be selected if quantization technique is selected")
             return
 
+        # CHAMADA DA FUNCAO
+        separated_image_2 = None
         if "QUANTIZE" in command:
 
             # caso a imagem ainda não esteja separada
@@ -437,16 +442,24 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
             q_matrix_y = load_q_matrix("q_matrix_y.csv")
             q_matrix_cbcr = load_q_matrix("q_matrix_cbcr.csv")
 
+            set_printoptions(threshold=sys.maxsize)
             separated_image = (
                 quantize(separated_image[0], q_matrix_y),
                 quantize(separated_image[1], q_matrix_cbcr),
                 quantize(separated_image[2], q_matrix_cbcr)
             )
-
+            
+            # CHAMADA DA FUNCAO
             log_correction = True
+            separated_image_2 = (
+                DPCM_encoder(separated_image[0]),
+                DPCM_encoder(separated_image[1]),
+                DPCM_encoder(separated_image[2])
+            )
 
-
-
+        if separated_image_2 is not None:
+            image = separated_image_2[channel]
+            
         # mostrar a imagem
         if separated_image is not None:
             image = separated_image[channel]

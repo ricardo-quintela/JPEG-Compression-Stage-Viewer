@@ -18,3 +18,6 @@ from .dct import calculate_dct, calculate_inv_dct
 
 # quantization
 from .quantization import quantize, inv_quantize
+
+# dpcm
+from .DPCM import DPCM_encoder, DPCM_decoder

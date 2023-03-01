@@ -19,6 +19,7 @@ from imgtools import add_padding
 from imgtools import down_sample
 from imgtools import calculate_dct
 from imgtools import quantize
+from imgtools import DPCM_encoder
 
 from file_worker import lex, synt, semantic, read_config, load_grammar, load_q_matrix
 
@@ -230,6 +231,7 @@ def main():
 
             # mostrar a imagem com o colormap
             show_img(selected_channel, colormap, name=name, log_correction=log_correction)
+
 
         # mostrar a imagem sem colormap
         else:
