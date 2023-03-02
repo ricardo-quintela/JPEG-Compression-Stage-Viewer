@@ -21,6 +21,8 @@ from imgtools import quantize
 from imgtools import dpcm_encoder
 
 from metrics import MSE
+from metrics import RMSE
+from metrics import SNR
 
 from .stoken import Token
 from .file_reader import load_q_matrix
@@ -284,7 +286,10 @@ def semantic(buffer: List[Token]):
             plot_title="Decoded Image"
         )
 
-        print(MSE(read_bmp('img/barn_mountains.bmp'), decoded_image))
+        MSE_value = MSE(read_bmp('img/barn_mountains.bmp'), decoded_image)
+        print(MSE_value)
+        print(RMSE(MSE_value))
+        print(SNR(MSE, read_bmp('img/barn_mountains.bmp')))
     
     # mostrar todos os plots
     show()
