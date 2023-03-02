@@ -1,7 +1,9 @@
 """Contém funções para aplicar quantização em imagens
 """
 
-from numpy import ndarray, zeros, int16, round as npround
+from numpy import ndarray, zeros, int16, round as npround, ones, uint8, float64
+
+FATOR = 75
 
 def quantize(
         channel: ndarray,
@@ -40,13 +42,32 @@ def quantize(
     # alocar espaço para guardar outras matrizes
     ch_quantized = zeros(channel.shape, dtype=int16)
 
-    # fazer a quantização das matrizes de imagem
+    if FATOR >= 50:
+        fator_escala = (100 - FATOR) / 50
+    elif FATOR < 50 and FATOR > 0:
+        fator_escala = 50 / FATOR
+    elif FATOR == 0:
+        fator_escala = 0
+    else:
+        fator_escala = 0
+    
+    if fator_escala != 0:
+        q_matriz_with_factor = npround(fator_escala * q_matrix)
+    else:
+        q_matriz_with_factor = ones(ch_quantized.shape)
+    
+    q_matriz_with_factor[q_matriz_with_factor > 255] = 255
+    q_matriz_with_factor[q_matriz_with_factor < 1] = 1
+    
+    q_matriz_with_factor = npround(q_matriz_with_factor).astype(uint8)
 
+    # fazer a quantização das matrizes de imagem
     for i in range(0, ch_quantized.shape[0], 8):
         for j in range(0, ch_quantized.shape[1], 8):
             ch_quantized[i:i+8, j:j+8] = npround(
-                channel[i:i+8, j:j+8] / q_matrix
+                channel[i:i+8, j:j+8] / q_matriz_with_factor
             )
+            
 
     return ch_quantized
 
@@ -90,9 +111,29 @@ def inv_quantize(
     channel = zeros(ch_quantized.shape, dtype=int16)
 
     # fazer a quantização das matrizes de imagem
+    if FATOR >= 50:
+        fator_escala = (100 - FATOR) / 50
+    elif FATOR < 50 and FATOR > 0:
+        fator_escala = 50 / FATOR
+    elif FATOR == 0:
+        fator_escala = 0
+    else:
+        fator_escala = 0
+    
+    if fator_escala != 0:
+        q_matriz_with_factor = npround(fator_escala * q_matrix)
+    else:
+        q_matriz_with_factor = ones(ch_quantized.shape)
+        
+    q_matriz_with_factor[q_matriz_with_factor > 255] = 255
+    q_matriz_with_factor[q_matriz_with_factor < 1] = 1
+    
+    q_matriz_with_factor = npround(q_matriz_with_factor).astype(uint8)
 
     for i in range(0, channel.shape[0], 8):
         for j in range(0, channel.shape[1], 8):
-            channel[i:i+8, j:j+8] = ch_quantized[i:i+8, j:j+8] * q_matrix
-            
+            channel[i:i+8, j:j+8] = ch_quantized[i:i+8, j:j+8] * q_matriz_with_factor
+    
+    channel = npround(channel).astype(float64)
+                
     return channel

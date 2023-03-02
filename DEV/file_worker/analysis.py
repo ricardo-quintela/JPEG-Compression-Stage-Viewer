@@ -20,6 +20,8 @@ from imgtools import calculate_dct
 from imgtools import quantize
 from imgtools import dpcm_encoder
 
+from metrics import MSE
+
 from .stoken import Token
 from .file_reader import load_q_matrix
 
@@ -282,6 +284,8 @@ def semantic(buffer: List[Token]):
             plot_title="Decoded Image"
         )
 
+        print(MSE(read_bmp('img/barn_mountains.bmp'), decoded_image))
+    
     # mostrar todos os plots
     show()
 
