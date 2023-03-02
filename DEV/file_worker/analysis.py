@@ -164,7 +164,7 @@ def lex(buffer: str) -> List[Token]:
     # tokens QUANTIZE
     for match in dcpm_matches:
         tokens.append(
-            Token("DCPM", match.start())
+            Token("DPCM", match.start())
         )
 
     # ordenar os tokens
@@ -460,11 +460,11 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
 
 
         # codificar os coeficientes DC da imagem e prevenir erros de não ter canal selecionado
-        if "DCPM" in command and channel is None:
-            print("Color channel must be selected if DCPM encoding is selected")
+        if "DPCM" in command and channel is None:
+            print("Color channel must be selected if DPCM encoding is selected")
             return
 
-        if "DCPM" in command:
+        if "DPCM" in command:
 
             # caso a imagem ainda não esteja separada
             if separated_image is None:
