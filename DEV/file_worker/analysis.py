@@ -284,7 +284,7 @@ def semantic(buffer: List[Token]):
             plot_title="Decoded Image"
         )
 
-        print(MSE(read_bmp('img/barn_mountains.bmp'), decoded_image))
+        # print(MSE(read_bmp('img/barn_mountains.bmp'), decoded_image))
     
     # mostrar todos os plots
     show()
