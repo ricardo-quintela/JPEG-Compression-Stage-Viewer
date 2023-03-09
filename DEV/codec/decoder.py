@@ -15,7 +15,7 @@ from imgtools import dpcm_decoder
 from file_worker import load_q_matrix
 
 
-def decode(data: Tuple[ndarray, ndarray, ndarray], width: int, height: int) -> ndarray:
+def decode(data: Tuple[ndarray, ndarray, ndarray], width: int, height: int, quality_factor: int) -> ndarray:
     """Decodifica a matriz de bytes dada em formato jpeg
     para uma imagem
 
@@ -23,6 +23,7 @@ def decode(data: Tuple[ndarray, ndarray, ndarray], width: int, height: int) -> n
         data (Tuple[ndarray, ndarray, ndarray]): Os canais da imagem
         width (int): a largura da imagem original
         height (int): a altura da imagem original
+        quality_factor (int): o fator de qualidade da matriz de quantização
 
     Returns:
         ndarray: a imagem descodificada
@@ -38,9 +39,9 @@ def decode(data: Tuple[ndarray, ndarray, ndarray], width: int, height: int) -> n
     )
     
     de_quantized = (
-        inv_quantize(de_dpcm[0], q_matrix_y),
-        inv_quantize(de_dpcm[1], q_matrix_cbcr),
-        inv_quantize(de_dpcm[2], q_matrix_cbcr)
+        inv_quantize(de_dpcm[0], q_matrix_y, quality_factor),
+        inv_quantize(de_dpcm[1], q_matrix_cbcr, quality_factor),
+        inv_quantize(de_dpcm[2], q_matrix_cbcr, quality_factor)
     )
 
     inv_dct = calculate_inv_dct(

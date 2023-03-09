@@ -28,11 +28,11 @@ def MSE(imagem_original: ndarray, imagem_reconstruida: ndarray) -> float:
     return npsum((imagem_original - imagem_reconstruida)**2) / (imagem_original.shape[0]*imagem_original.shape[1])
 
 
-def RMSE(MSE: float):
-    return sqrt(MSE)
+def RMSE(MSE_value: float):
+    return sqrt(MSE_value)
 
-def SNR(MSE: float, imagem_original: ndarray):
+def SNR(MSE_value: float, imagem_original: ndarray):
     
     P = npsum((imagem_original)**2) / (imagem_original.shape[0]*imagem_original.shape[1])
     
-    return log10(P/MSE) * 10
+    return log10(P/MSE_value) * 10
