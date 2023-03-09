@@ -23,6 +23,7 @@ from imgtools import dpcm_encoder
 from metrics import MSE
 from metrics import RMSE
 from metrics import SNR
+from metrics import PSNR
 
 from .stoken import Token
 from .file_reader import load_q_matrix
@@ -290,6 +291,7 @@ def semantic(buffer: List[Token]):
         print(MSE_value)
         print(RMSE(MSE_value))
         print(SNR(MSE, read_bmp('img/barn_mountains.bmp')))
+        #print(PSNR(MSE, read_bmp('img/barn_mountains.bmp')))
     
     # mostrar todos os plots
     show()

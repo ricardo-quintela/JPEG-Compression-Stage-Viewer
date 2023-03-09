@@ -36,3 +36,9 @@ def SNR(MSE: float, imagem_original: ndarray):
     P = npsum((imagem_original)**2) / (imagem_original.shape[0]*imagem_original.shape[1])
     
     return log10(P/MSE) * 10
+
+def PSNR(MSE: float, imagem_original: ndarray):
+    
+    aux = max(imagem_original)
+    
+    return log10(aux/MSE) * 10
