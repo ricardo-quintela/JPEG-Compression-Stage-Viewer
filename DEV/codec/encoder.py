@@ -8,6 +8,8 @@ from imgtools import show_img
 from imgtools import add_padding
 from imgtools import converter_to_ycbcr
 from imgtools import down_sample
+from imgtools import calculate_dct
+from imgtools import quantize
 
 def encode(path: str):
     """Codifica o arquivo de imagem no caminho fornecido para um formato JPEG
@@ -47,8 +49,28 @@ def encode(path: str):
     # Exercicio 6
     y_resized, cb_resized, cr_resized = down_sample(image_y, image_cb, image_cr, (4,2,2))
     
-    # Exercicio 7
+    show_img(y_resized, map_gr, fig_numb=9, name="Y resized")
+    show_img(cb_resized, map_gr, fig_numb=10, name="Cb resized")
+    show_img(cr_resized, map_gr, fig_numb=11, name="Cr resized")
     
+    # Exercicio 7
+    y_dct_without_blocks, cb_dct_without_blocks, cr_dct_without_blocks = calculate_dct(y_resized, cb_resized, cr_resized)
+    y_dct_blocks_8, cb_dct_blocks_8, cr_dct_blocks_8 = calculate_dct(y_resized, cb_resized, cr_resized, 8)
+    y_dct_blocks_64, cb_dct_blocks_64, cr_dct_blocks_64 = calculate_dct(y_resized, cb_resized, cr_resized, 64)
+    
+    show_img(y_dct_without_blocks, map_gr, fig_numb=12, name="Y resized")
+    show_img(cb_dct_without_blocks, map_gr, fig_numb=13, name="Cb resized")
+    show_img(cr_dct_without_blocks, map_gr, fig_numb=14, name="Cr resized")
+    show_img(y_dct_blocks_8, map_gr, fig_numb=15, name="Y resized")
+    show_img(cb_dct_blocks_8, map_gr, fig_numb=16, name="Cb resized")
+    show_img(cr_dct_blocks_8, map_gr, fig_numb=17, name="Cr resized")
+    show_img(y_dct_blocks_64, map_gr, fig_numb=18, name="Y resized")
+    show_img(cb_dct_blocks_64, map_gr, fig_numb=19, name="Cb resized")
+    show_img(cr_dct_blocks_64, map_gr, fig_numb=20, name="Cr resized")
+    
+    # Exercicio 8
+    
+        
     show()
 
     return image_y, image_cb, image_cr, image.shape[0], image.shape[1]

@@ -150,6 +150,19 @@ def converter_to_ycbcr(img: ndarray) -> Tuple[ndarray, ndarray, ndarray]:
     Cb = (T[1,0] * R + T[1,1] * G + T[1,2] * B) + 128
     Cr = (T[2,0] * R + T[2,1] * G + T[2,2] * B) + 128
 
+    # round everthing to int type
+    Y = npround(Y).astype(uint8)
+    Cb = npround(Cb).astype(uint8)
+    Cr = npround(Cr).astype(uint8)
+
+
+    Y[Y > 255] = 255
+    Y[Y < 0] = 0
+    Cb[Cb > 255] = 255
+    Cb[Cb < 0] = 0
+    Cr[Cr > 255] = 255
+    Cr[Cr < 0] = 0
+
     return Y, Cb, Cr
 
 

@@ -50,15 +50,15 @@ def quantize(
         fator_escala = 0
     else:
         fator_escala = 0
-    
+
     if fator_escala != 0:
         q_matriz_with_factor = npround(fator_escala * q_matrix)
     else:
         q_matriz_with_factor = ones(ch_quantized.shape)
-    
+
     q_matriz_with_factor[q_matriz_with_factor > 255] = 255
     q_matriz_with_factor[q_matriz_with_factor < 1] = 1
-    
+
     q_matriz_with_factor = npround(q_matriz_with_factor).astype(uint8)
 
     # fazer a quantização das matrizes de imagem
@@ -67,9 +67,8 @@ def quantize(
             ch_quantized[i:i+8, j:j+8] = npround(
                 channel[i:i+8, j:j+8] / q_matriz_with_factor
             )
-            
-
-    return ch_quantized
+    
+    return ch_quantized.astype(int)
 
 
 

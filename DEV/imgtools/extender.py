@@ -3,7 +3,7 @@
 from typing import Tuple
 
 from numpy import ndarray, newaxis, vstack, hstack
-from cv2 import resize
+from cv2 import resize, INTER_LINEAR
 
 
 def add_padding(img: ndarray, min_size: int) -> Tuple[ndarray, int, int]:
@@ -95,10 +95,10 @@ def down_sample(
         width_divide_cb = width_divide_cr
 
     channel2_resized = resize(
-        channel2, (int(height / height_divide_cb), int(width / width_divide_cb))
+        channel2, (int(height / height_divide_cb), int(width / width_divide_cb)), interpolation=INTER_LINEAR
     )
     channel3_resized = resize(
-        channel3, (int(height / height_divide_cr), int(width / width_divide_cr))
+        channel3, (int(height / height_divide_cr), int(width / width_divide_cr)), interpolation=INTER_LINEAR
     )
 
     return channel1, channel2_resized, channel3_resized
