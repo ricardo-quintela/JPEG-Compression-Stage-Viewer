@@ -57,7 +57,7 @@ def lex(buffer: str) -> List[Token]:
     rgb_matches = finditer(r"-r", buffer)
     subsample_matches = finditer(r"-s [0-9] [0-9] [0-9]", buffer)
     dct_matches = finditer(r"-d( [0-9]+)?", buffer)
-    quantize_matches = finditer(r"-q", buffer)
+    quantize_matches = finditer(r"-q [1-9][0-9]*", buffer)
     dcpm_matches = finditer(r"-f", buffer)
 
 
@@ -162,11 +162,13 @@ def lex(buffer: str) -> List[Token]:
 
     # tokens QUANTIZE
     for match in quantize_matches:
+        value = int(split(r" ", match.group())[1])
+
         tokens.append(
-            Token("QUANTIZE", match.start())
+            Token("QUANTIZE", match.start(), value)
         )
 
-    # tokens QUANTIZE
+    # tokens DCPM
     for match in dcpm_matches:
         tokens.append(
             Token("DPCM", match.start())
@@ -280,7 +282,7 @@ def semantic(buffer: List[Token]):
 
     # mostrar a imagem decodificada
     if temp_encoded_img is not None:
-        decoded_image = decode(temp_encoded_img[0], temp_encoded_img[1], temp_encoded_img[2])
+        decoded_image = decode(temp_encoded_img[0], temp_encoded_img[1], temp_encoded_img[2], temp_encoded_img[3])
 
         show_img(
             decoded_image,
@@ -461,11 +463,15 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
             q_matrix_y = load_q_matrix("q_matrix_y.csv")
             q_matrix_cbcr = load_q_matrix("q_matrix_cbcr.csv")
 
+            if command["QUANTIZE"] > 100 or command["QUANTIZE"] < 0:
+                print("Quality factor must be a percentage value")
+                return
+
 
             separated_image = (
-                quantize(separated_image[0], q_matrix_y),
-                quantize(separated_image[1], q_matrix_cbcr),
-                quantize(separated_image[2], q_matrix_cbcr)
+                quantize(separated_image[0], q_matrix_y, command["QUANTIZE"]),
+                quantize(separated_image[1], q_matrix_cbcr, command["QUANTIZE"]),
+                quantize(separated_image[2], q_matrix_cbcr, command["QUANTIZE"])
             )
             log_correction = True
 
@@ -508,6 +514,6 @@ def semantic_plot(block: list, plot_title: str, plot_size: tuple, figure_identif
 
     # caso tenham sido aplicados niveis de encoding na image
     if command is not None and "YCC" in command and "SUBSAMPLE" in command and "PADDING" in command and "DCT" in command and "QUANTIZE" in command and "DPCM" in command:
-        return separated_image, o_width, o_height
+        return separated_image, o_width, o_height, command["QUANTIZE"]
 
     return None

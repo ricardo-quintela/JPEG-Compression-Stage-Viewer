@@ -3,11 +3,10 @@
 
 from numpy import ndarray, zeros, int16, round as npround, ones, uint8, float64
 
-FATOR = 75
-
 def quantize(
         channel: ndarray,
-        q_matrix: ndarray
+        q_matrix: ndarray,
+        quality_factor: int
 ) -> ndarray:
     """Aplica a técnica de quantização ao canal da imagem
     fornecido
@@ -19,6 +18,7 @@ def quantize(
     Args:
         channel (ndarray): o canal a quantizar
         q_matrix (ndarray): a matriz de quantização a ser usada
+        quality_factor (int): o fator de qualidade das matrizes de quantização
 
     Returns:
         ndarray: o canal da imagem devidamente quantizado
@@ -42,11 +42,11 @@ def quantize(
     # alocar espaço para guardar outras matrizes
     ch_quantized = zeros(channel.shape, dtype=int16)
 
-    if FATOR >= 50:
-        fator_escala = (100 - FATOR) / 50
-    elif FATOR < 50 and FATOR > 0:
-        fator_escala = 50 / FATOR
-    elif FATOR == 0:
+    if quality_factor >= 50:
+        fator_escala = (100 - quality_factor) / 50
+    elif quality_factor < 50 and quality_factor > 0:
+        fator_escala = 50 / quality_factor
+    elif quality_factor == 0:
         fator_escala = 0
     else:
         fator_escala = 0
@@ -74,7 +74,8 @@ def quantize(
 
 def inv_quantize(
         ch_quantized: ndarray,
-        q_matrix: ndarray
+        q_matrix: ndarray,
+        quality_factor: int
 ) -> ndarray:
     """Reverte a técnica de quantização aplicada anteriormente
     ao canal da imagem fornecido
@@ -86,6 +87,7 @@ def inv_quantize(
     Args:
         ch_quantized (ndarray): o canal para inverter a quantização
         q_matrix (ndarray): a matriz de quantização a ser usada
+        quality_factor (int): o fator de qualidade da matriz de quatização
 
     Returns:
         ndarray: o canal da imagem devidamente quantizado
@@ -110,11 +112,11 @@ def inv_quantize(
     channel = zeros(ch_quantized.shape, dtype=int16)
 
     # fazer a quantização das matrizes de imagem
-    if FATOR >= 50:
-        fator_escala = (100 - FATOR) / 50
-    elif FATOR < 50 and FATOR > 0:
-        fator_escala = 50 / FATOR
-    elif FATOR == 0:
+    if quality_factor >= 50:
+        fator_escala = (100 - quality_factor) / 50
+    elif quality_factor < 50 and quality_factor > 0:
+        fator_escala = 50 / quality_factor
+    elif quality_factor == 0:
         fator_escala = 0
     else:
         fator_escala = 0

@@ -123,8 +123,8 @@ def main():
 
     transformations_group.add_argument(
         "-q", "--quantize",
-        help="quantize the image",
-        action="store_true"
+        help="quantize the image with a defined quality factor [0,100]",
+        type=int
     )
 
     transformations_group.add_argument(
@@ -232,10 +232,14 @@ def main():
                 q_matrix_y = load_q_matrix("q_matrix_y.csv")
                 q_matrix_cbcr = load_q_matrix("q_matrix_cbcr.csv")
 
+                if args.quantize > 100 or args.quantize < 0:
+                    print(f"{basename(__file__)}: error: quality factor must be a percentage value")
+                    return
+
                 channels = (
-                    quantize(channels[0], q_matrix_y),
-                    quantize(channels[1], q_matrix_cbcr),
-                    quantize(channels[2], q_matrix_cbcr)
+                    quantize(channels[0], q_matrix_y, args.quantize),
+                    quantize(channels[1], q_matrix_cbcr, args.quantize),
+                    quantize(channels[2], q_matrix_cbcr, args.quantize)
                 )
 
                 # ocorreu um erro
