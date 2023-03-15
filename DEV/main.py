@@ -185,11 +185,11 @@ def main():
     if args.encode:
 
         # tratamento de parâmetros em falta
-        if args.image is None or args.quantize is None:
-            print(f"{basename(__file__)}: error: an image path must be given as well as a quality factor")
+        if args.image is None or args.quantize is None or args.downsample is None:
+            print(f"{basename(__file__)}: error: an image path, a subsampling rate and a quality factor must be given")
             return
 
-        main_codec_function(args.image, args.quantize)
+        main_codec_function(args.image, args.quantize, args.downsample)
         return
 
 

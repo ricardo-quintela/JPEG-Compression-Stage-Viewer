@@ -15,11 +15,13 @@ from imgtools import dpcm_encoder
 
 from file_worker import load_q_matrix
 
-def encode(image: ndarray, fator_qualidade: int):
+def encode(image: ndarray, fator_qualidade: int, downsampling: tuple):
     """Codifica o arquivo de imagem no caminho fornecido para um formato JPEG
 
     Args:
-        path (str): the path to the file
+        image (ndarray): a imagem original
+        fator_qualidade (int): o fator de qualidade na quantizaçao
+        downsampling (tuple): o racio de downsampling usado {1,2,4,0}
     """
     
     close("all")
@@ -49,7 +51,7 @@ def encode(image: ndarray, fator_qualidade: int):
 
     
     # Exercicio 6
-    y_resized, cb_resized, cr_resized = down_sample(image_y, image_cb, image_cr, (4,2,2))
+    y_resized, cb_resized, cr_resized = down_sample(image_y, image_cb, image_cr, downsampling)
     
     show_img(y_resized, map_gr, fig_number=3, name="Canal Y", sub_plot_config=(2,2,1), plot_title="Downsampling 422")
     show_img(cb_resized, map_gr, fig_number=3, name="Canal Cb", sub_plot_config=(2,2,2), plot_title="Downsampling 422")
