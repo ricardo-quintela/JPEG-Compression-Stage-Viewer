@@ -22,11 +22,11 @@ def MSE(imagem_original: ndarray, imagem_reconstruida: ndarray) -> float:
         float: as diferenças entre a imagem original e reconstruida
     """
 
-    imagem_original,_,_ = add_padding(imagem_original, 32)
-    imagem_reconstruida,_,_ = add_padding(imagem_reconstruida, 32)
+    imagem_original_com_padding,_,_ = add_padding(imagem_original, 32)
+    imagem_reconstruida_com_padding,_,_ = add_padding(imagem_reconstruida, 32)
 
-    imagem_O = converter_to_ycbcr(imagem_original)
-    imagem_R = converter_to_ycbcr(imagem_reconstruida)
+    imagem_O = converter_to_ycbcr(imagem_original_com_padding)
+    imagem_R = converter_to_ycbcr(imagem_reconstruida_com_padding)
     
     differences = abs(imagem_O[0].astype(float32) - imagem_R[0])
     
@@ -34,11 +34,16 @@ def MSE(imagem_original: ndarray, imagem_reconstruida: ndarray) -> float:
         differences,
         create_colormap((0,0,0), (1,1,1))
     )
+    
+    show_img(
+        imagem_reconstruida
+    )
 
     imagem_original = npround(imagem_original).astype(float32)
-
+    
+    print(npmax(imagem_original - imagem_reconstruida))
+    
     return npsum((imagem_original - imagem_reconstruida)**2) / (imagem_original.shape[0]*imagem_original.shape[1])
-
 
 def RMSE(MSE_value: float) -> float:
     """Calcula a raíz da diferença média quadrada de entre os píxeis da imagem original

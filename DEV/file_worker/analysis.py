@@ -20,13 +20,6 @@ from imgtools import calculate_dct
 from imgtools import quantize
 from imgtools import dpcm_encoder
 
-from metrics import MSE
-from metrics import RMSE
-from metrics import SNR
-from metrics import PSNR
-
-from codec import encode
-
 from .stoken import Token
 from .file_reader import load_q_matrix
 
@@ -279,7 +272,6 @@ def semantic(buffer: List[Token]):
                 i+1
             )
 
-            print(encoded_image)
             if temp_encoded_img is None:
                 temp_encoded_img = encoded_image
 

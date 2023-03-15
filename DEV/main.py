@@ -21,12 +21,11 @@ from imgtools import calculate_dct
 from imgtools import quantize
 from imgtools import dpcm_encoder
 
-from codec import main_codec_function
-
-from file_worker import lex, synt, semantic, read_config, load_grammar, load_q_matrix
+from file_worker import read_config, load_grammar, load_q_matrix, semantic, lex, synt
 
 from matplotlib.pyplot import close
 
+from codec import main_codec_function
 
 def main(): 
     """Função principal onde todas as outras serão chamadas
@@ -92,7 +91,6 @@ def main():
     # encode geral
     parser.add_argument(
         "-e", "--encode",
-        type=str,
         help="encode image using JPEG codec and display steps",
         action="store_true"
     )
@@ -190,13 +188,8 @@ def main():
         if args.image is None or args.quantize is None:
             print(f"{basename(__file__)}: error: an image path must be given as well as a quality factor")
             return
-        
-        # ler a imagem
-        image = read_bmp(args.image)
-        if image is None:
-            return
 
-        main_codec_function(image, args.quantize)
+        main_codec_function(args.image, args.quantize)
         return
 
 
