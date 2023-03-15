@@ -25,6 +25,8 @@ from metrics import RMSE
 from metrics import SNR
 from metrics import PSNR
 
+from codec import encode
+
 from .stoken import Token
 from .file_reader import load_q_matrix
 
@@ -277,6 +279,7 @@ def semantic(buffer: List[Token]):
                 i+1
             )
 
+            print(encoded_image)
             if temp_encoded_img is None:
                 temp_encoded_img = encoded_image
 
@@ -294,9 +297,12 @@ def semantic(buffer: List[Token]):
         print("RMSE: " + str(RMSE(MSE_value)))
         print("SNR: " + str(SNR(MSE_value, read_bmp('img/barn_mountains.bmp'))))
         print("PSNR: " + str(PSNR(MSE_value, read_bmp('img/barn_mountains.bmp'))))
+        
+        #encode('img/barn_mountains.bmp')
     
     # mostrar todos os plots
     show()
+    
 
 
 def create_blocks(buffer: List[Token]) -> List[List]:

@@ -26,7 +26,7 @@ from file_worker import lex, synt, semantic, read_config, load_grammar, load_q_m
 from matplotlib.pyplot import close
 
 
-def main():
+def main(): 
     """Função principal onde todas as outras serão chamadas
     e será tratada a interação com o utilizador
 
@@ -44,7 +44,7 @@ def main():
 
     # fechar todos os plots a correr no backend do matplotlib
     close("all")
-
+    
     # criar um parser de argumentos da consola
     parser = argparse.ArgumentParser()
 
