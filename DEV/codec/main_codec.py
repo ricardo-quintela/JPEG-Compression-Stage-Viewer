@@ -7,7 +7,7 @@ from imgtools import read_bmp
 
 from matplotlib.pyplot import show
 
-def main_codec_function(img: str, fator_qualidade: int):
+def main_codec_function(img: str, fator_qualidade: int, downsampling: tuple):
     """Serve como main quando não queremos utilizar flags específicas.
     Aqui chama-se uma função de encode que faz todo o processo para o trabalho de MULTIMÉDIA
     com o chamado hardcode. De seguida aplica o decode e apresenta alguns valores para analisar a qualidade 
@@ -16,12 +16,13 @@ def main_codec_function(img: str, fator_qualidade: int):
     Args:
         img (str): caminho para a imagem
         fator_qualidade (int): fator de qualidade segundo o qual vai-se fazer a codificação
+        downsampling (tuple): o fator de subamostragem
     
     """
     
     imagem_original = read_bmp(img)
 
-    y_codificada, cb_codificada, cr_codificada, comprimento, largura = encode(imagem_original, fator_qualidade)
+    y_codificada, cb_codificada, cr_codificada, comprimento, largura = encode(imagem_original, fator_qualidade, downsampling)
     
     imagem_codificada = (
         y_codificada,

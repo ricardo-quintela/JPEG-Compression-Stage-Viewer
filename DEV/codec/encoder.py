@@ -15,11 +15,13 @@ from imgtools import dpcm_encoder
 
 from file_worker import load_q_matrix
 
-def encode(image: ndarray, fator_qualidade: int):
+def encode(image: ndarray, fator_qualidade: int, downsampling: tuple):
     """Codifica o arquivo de imagem no caminho fornecido para um formato JPEG
 
     Args:
-        path (str): the path to the file
+        image (ndarray): a imagem original
+        fator_qualidade (int): o fator de qualidade na quantizaçao
+        downsampling (tuple): o racio de downsampling usado {1,2,4,0}
     """
     
     close("all")
