@@ -21,6 +21,8 @@ from imgtools import calculate_dct
 from imgtools import quantize
 from imgtools import dpcm_encoder
 
+from codec import main_codec_function
+
 from file_worker import lex, synt, semantic, read_config, load_grammar, load_q_matrix
 
 from matplotlib.pyplot import close
@@ -86,6 +88,15 @@ def main():
         help="give a name to the plot",
         metavar="NAME"
     )
+
+    # encode geral
+    parser.add_argument(
+        "-e", "--encode",
+        type=str,
+        help="encode image using JPEG codec and display steps",
+        action="store_true"
+    )
+
 
     # modelos de cor
     color_model_group = parser.add_mutually_exclusive_group()
@@ -170,6 +181,26 @@ def main():
             print(
                 f"{basename(__file__)}: error: colormap argument requires the selection of a color channel")
             return
+        
+
+    # utilizar encode geral
+    if args.encode:
+
+        # tratamento de parâmetros em falta
+        if args.image is None or args.quantize is None:
+            print(f"{basename(__file__)}: error: an image path must be given as well as a quality factor")
+            return
+        
+        # ler a imagem
+        image = read_bmp(args.image)
+        if image is None:
+            return
+
+        main_codec_function(image, args.quantize)
+        return
+
+
+
 
     # o utilizador escolhe ver a imagem
     if args.image:
