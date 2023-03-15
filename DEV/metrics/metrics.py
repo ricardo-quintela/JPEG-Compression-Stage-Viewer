@@ -1,3 +1,5 @@
+"""Calculo de metricas que verificam a qualidade do codec.
+"""
 
 from numpy import sum as npsum, ndarray, float32, round as npround, max as npmax
 

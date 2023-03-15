@@ -291,15 +291,7 @@ def semantic(buffer: List[Token]):
             decoded_image,
             plot_title="Decoded Image"
         )
-
-        MSE_value = MSE(read_bmp('img/barn_mountains.bmp'), decoded_image)
-        print("MSE: " + str(MSE_value))
-        print("RMSE: " + str(RMSE(MSE_value)))
-        print("SNR: " + str(SNR(MSE_value, read_bmp('img/barn_mountains.bmp'))))
-        print("PSNR: " + str(PSNR(MSE_value, read_bmp('img/barn_mountains.bmp'))))
-        
-        #encode('img/barn_mountains.bmp')
-    
+            
     # mostrar todos os plots
     show()
     

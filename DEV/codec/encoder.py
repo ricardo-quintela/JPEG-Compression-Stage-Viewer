@@ -13,9 +13,7 @@ from imgtools import dpcm_encoder
 
 from file_worker import load_q_matrix
 
-FATOR = 75
-
-def encode(path: str):
+def encode(path: str, fator_qualidade: int):
     """Codifica o arquivo de imagem no caminho fornecido para um formato JPEG
 
     Args:
@@ -76,9 +74,9 @@ def encode(path: str):
     q_matrix_y = load_q_matrix("q_matrix_y.csv")
     q_matrix_cbcr = load_q_matrix("q_matrix_cbcr.csv")
     
-    y_quantizated = quantize(y_dct_blocks_8, q_matrix_y, FATOR)
-    cb_quantizated = quantize(cb_dct_blocks_8, q_matrix_cbcr, FATOR)
-    cr_quantizated = quantize(cr_dct_blocks_8, q_matrix_cbcr, FATOR)
+    y_quantizated = quantize(y_dct_blocks_8, q_matrix_y, fator_qualidade)
+    cb_quantizated = quantize(cb_dct_blocks_8, q_matrix_cbcr, fator_qualidade)
+    cr_quantizated = quantize(cr_dct_blocks_8, q_matrix_cbcr, fator_qualidade)
     
     show_img(y_quantizated, map_gr, fig_number=28, name="Y quantizated", log_correction=True)
     show_img(cb_quantizated, map_gr, fig_number=29, name="Cb quantizated", log_correction=True)

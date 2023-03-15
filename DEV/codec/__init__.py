@@ -4,5 +4,8 @@
 # encoder
 from .encoder import encode
 
-#decoder
+# decoder
 from .decoder import decode
+
+# main function
+from .main_codec import main_codec_function
