@@ -5,6 +5,8 @@ from metrics import SNR, PSNR, MSE, RMSE
 
 from imgtools import read_bmp
 
+from matplotlib.pyplot import show
+
 def main_codec_function(img: str, fator_qualidade: int, downsampling: tuple):
     """Serve como main quando não queremos utilizar flags específicas.
     Aqui chama-se uma função de encode que faz todo o processo para o trabalho de MULTIMÉDIA
@@ -37,5 +39,5 @@ def main_codec_function(img: str, fator_qualidade: int, downsampling: tuple):
     print("SNR: " + str(SNR(MSE_value, imagem_original)))
     print("PSNR: " + str(PSNR(MSE_value, imagem_original)))
     
-    
+    show()
     

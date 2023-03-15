@@ -62,17 +62,17 @@ def encode(image: ndarray, fator_qualidade: int, downsampling: tuple):
     y_dct_blocks_8, cb_dct_blocks_8, cr_dct_blocks_8 = calculate_dct(y_resized, cb_resized, cr_resized, 8)
     y_dct_blocks_64, cb_dct_blocks_64, cr_dct_blocks_64 = calculate_dct(y_resized, cb_resized, cr_resized, 64)
     
-    show_img(y_dct_without_blocks, map_gr, fig_number=4, name="Canal Y", sub_plot_config=(2,2,1), plot_title="DCT")
-    show_img(cb_dct_without_blocks, map_gr, fig_number=4, name="Canal Cb", sub_plot_config=(2,2,2), plot_title="DCT")
-    show_img(cr_dct_without_blocks, map_gr, fig_number=4, name="Canal Cr", sub_plot_config=(2,2,3), plot_title="DCT")
+    show_img(y_dct_without_blocks, map_gr, fig_number=4, name="Canal Y", sub_plot_config=(2,2,1), plot_title="DCT", log_correction=True)
+    show_img(cb_dct_without_blocks, map_gr, fig_number=4, name="Canal Cb", sub_plot_config=(2,2,2), plot_title="DCT", log_correction=True)
+    show_img(cr_dct_without_blocks, map_gr, fig_number=4, name="Canal Cr", sub_plot_config=(2,2,3), plot_title="DCT", log_correction=True)
 
-    show_img(y_dct_blocks_8, map_gr, fig_number=5, name="Canal Y", sub_plot_config=(2,2,1), plot_title="DCT 8x8")
-    show_img(cb_dct_blocks_8, map_gr, fig_number=5, name="Canal Cb", sub_plot_config=(2,2,2), plot_title="DCT 8x8")
-    show_img(cr_dct_blocks_8, map_gr, fig_number=5, name="Canal Cr", sub_plot_config=(2,2,3), plot_title="DCT 8x8")
+    show_img(y_dct_blocks_8, map_gr, fig_number=5, name="Canal Y", sub_plot_config=(2,2,1), plot_title="DCT 8x8", log_correction=True)
+    show_img(cb_dct_blocks_8, map_gr, fig_number=5, name="Canal Cb", sub_plot_config=(2,2,2), plot_title="DCT 8x8", log_correction=True)
+    show_img(cr_dct_blocks_8, map_gr, fig_number=5, name="Canal Cr", sub_plot_config=(2,2,3), plot_title="DCT 8x8", log_correction=True)
 
-    show_img(y_dct_blocks_64, map_gr, fig_number=6, name="Canal Y", sub_plot_config=(2,2,1), plot_title="DCT 64x64")
-    show_img(cb_dct_blocks_64, map_gr, fig_number=6, name="Canal Cb", sub_plot_config=(2,2,2), plot_title="DCT 64x64")
-    show_img(cr_dct_blocks_64, map_gr, fig_number=6, name="Canal Cr", sub_plot_config=(2,2,3), plot_title="DCT 64x64")
+    show_img(y_dct_blocks_64, map_gr, fig_number=6, name="Canal Y", sub_plot_config=(2,2,1), plot_title="DCT 64x64", log_correction=True)
+    show_img(cb_dct_blocks_64, map_gr, fig_number=6, name="Canal Cb", sub_plot_config=(2,2,2), plot_title="DCT 64x64", log_correction=True)
+    show_img(cr_dct_blocks_64, map_gr, fig_number=6, name="Canal Cr", sub_plot_config=(2,2,3), plot_title="DCT 64x64", log_correction=True)
     
     # Exercicio 8
     q_matrix_y = load_q_matrix("q_matrix_y.csv")
@@ -82,9 +82,9 @@ def encode(image: ndarray, fator_qualidade: int, downsampling: tuple):
     cb_quantizated = quantize(cb_dct_blocks_8, q_matrix_cbcr, fator_qualidade)
     cr_quantizated = quantize(cr_dct_blocks_8, q_matrix_cbcr, fator_qualidade)
     
-    show_img(y_quantizated, map_gr, fig_number=7, name="Canal Y", log_correction=True, sub_plot_config=(2,2,1), plot_title="Qauntização 8x8")
-    show_img(cb_quantizated, map_gr, fig_number=7, name="Canal Cb", log_correction=True, sub_plot_config=(2,2,2), plot_title="Qauntização 8x8")
-    show_img(cr_quantizated, map_gr, fig_number=7, name="Canal Cr", log_correction=True, sub_plot_config=(2,2,3), plot_title="Qauntização 8x8")
+    show_img(y_quantizated, map_gr, fig_number=7, name="Canal Y", log_correction=True, sub_plot_config=(2,2,1), plot_title="Quantização 8x8")
+    show_img(cb_quantizated, map_gr, fig_number=7, name="Canal Cb", log_correction=True, sub_plot_config=(2,2,2), plot_title="Quantização 8x8")
+    show_img(cr_quantizated, map_gr, fig_number=7, name="Canal Cr", log_correction=True, sub_plot_config=(2,2,3), plot_title="Quantização 8x8")
     
     # Exercicio 9
     y_with_dcpm = dpcm_encoder(y_quantizated)
@@ -95,7 +95,6 @@ def encode(image: ndarray, fator_qualidade: int, downsampling: tuple):
     show_img(cb_with_dcpm, map_gr, fig_number=8, name="Canal Cb", log_correction=True, sub_plot_config=(2,2,2), plot_title="Codificação DCPM")
     show_img(cr_with_dcpm, map_gr, fig_number=8, name="Canal Cr", log_correction=True, sub_plot_config=(2,2,3), plot_title="Codificação DCPM")
         
-    show_img(image, name="Imagem original")
-    show()
+    show_img(image, fig_number=9, plot_title="Imagem Original", sub_plot_config=(1,1,1))
 
     return y_with_dcpm, cb_with_dcpm, cr_with_dcpm, image.shape[0], image.shape[1]
