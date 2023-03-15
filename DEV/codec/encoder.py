@@ -49,11 +49,11 @@ def encode(image: ndarray, fator_qualidade: int):
 
     
     # Exercicio 6
-    y_resized, cb_resized, cr_resized = down_sample(image_y, image_cb, image_cr, (4,2,0))
+    y_resized, cb_resized, cr_resized = down_sample(image_y, image_cb, image_cr, downsampling)
     
-    show_img(y_resized, map_gr, fig_number=3, name="Canal Y", sub_plot_config=(2,2,1), plot_title="Downsampling 422")
-    show_img(cb_resized, map_gr, fig_number=3, name="Canal Cb", sub_plot_config=(2,2,2), plot_title="Downsampling 422")
-    show_img(cr_resized, map_gr, fig_number=3, name="Canal Cr", sub_plot_config=(2,2,3), plot_title="Downsampling 422")
+    show_img(y_resized, map_gr, fig_number=3, name="Canal Y", sub_plot_config=(2,2,1), plot_title=f"Downsampling {downsampling}")
+    show_img(cb_resized, map_gr, fig_number=3, name="Canal Cb", sub_plot_config=(2,2,2), plot_title=f"Downsampling {downsampling}")
+    show_img(cr_resized, map_gr, fig_number=3, name="Canal Cr", sub_plot_config=(2,2,3), plot_title=f"Downsampling {downsampling}")
     
     # Exercicio 7
     y_dct_without_blocks, cb_dct_without_blocks, cr_dct_without_blocks = calculate_dct(y_resized, cb_resized, cr_resized)
