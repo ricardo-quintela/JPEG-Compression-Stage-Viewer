@@ -31,17 +31,22 @@ def MSE(imagem_original: ndarray, imagem_reconstruida: ndarray) -> float:
     differences = abs(imagem_O[0].astype(float32) - imagem_R[0])
     
     show_img(
-        differences,
-        create_colormap((0,0,0), (1,1,1))
+        imagem_reconstruida,
+        fig_number=11,
+        sub_plot_config=(1,1,1),
+        plot_title="Imagem Reconstruída"
     )
     
     show_img(
-        imagem_reconstruida
+        differences,
+        create_colormap((0,0,0), (1,1,1)),
+        fig_number=12,
+        sub_plot_config=(1,1,1),
+        plot_title="Diferenças Original-Reconstruído"
     )
+    
 
     imagem_original = npround(imagem_original).astype(float32)
-    
-    print(npmax(imagem_original - imagem_reconstruida))
     
     return npsum((imagem_original - imagem_reconstruida)**2) / (imagem_original.shape[0]*imagem_original.shape[1])
 
