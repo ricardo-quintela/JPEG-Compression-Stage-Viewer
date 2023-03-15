@@ -1,6 +1,7 @@
 from numpy import ndarray
 
-from . import encode, decode
+from .decoder import decode
+from .encoder import encode
 
 from metrics import SNR, PSNR, MSE, RMSE
 
