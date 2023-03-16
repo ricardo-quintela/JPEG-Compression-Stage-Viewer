@@ -19,25 +19,25 @@ def main_codec_function(img: str, fator_qualidade: int, downsampling: tuple):
         downsampling (tuple): o fator de subamostragem
     
     """
-    
+
     imagem_original = read_bmp(img)
 
     y_codificada, cb_codificada, cr_codificada, comprimento, largura = encode(imagem_original, fator_qualidade, downsampling)
-    
+
     imagem_codificada = (
         y_codificada,
         cb_codificada,
         cr_codificada
     )
-    
+
     imagem_descodificada = decode(imagem_codificada, comprimento, largura, fator_qualidade)
-    
+
     MSE_value = MSE(imagem_original, imagem_descodificada)
-    
+
     print("MSE: " + str(MSE_value))
     print("RMSE: " + str(RMSE(MSE_value)))
     print("SNR: " + str(SNR(MSE_value, imagem_original)))
     print("PSNR: " + str(PSNR(MSE_value, imagem_original)))
-    
+
     show()
     
