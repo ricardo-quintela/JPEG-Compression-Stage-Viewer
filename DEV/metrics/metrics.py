@@ -1,7 +1,7 @@
 """Calcula as métricas relativas à compressão da imagem.
 """
 
-from numpy import sum as npsum, ndarray, float32, round as npround, max as npmax
+from numpy import sum as npsum, ndarray, float32, round as npround, max as npmax, mean
 
 from imgtools import show_img
 from imgtools import create_colormap
@@ -27,16 +27,19 @@ def MSE(imagem_original: ndarray, imagem_reconstruida: ndarray) -> float:
 
     imagem_O = converter_to_ycbcr(imagem_original_com_padding)
     imagem_R = converter_to_ycbcr(imagem_reconstruida_com_padding)
-    
+
     differences = abs(imagem_O[0].astype(float32) - imagem_R[0])
-    
+
+    # quarto print
+    print(f"Média de diferenças: {mean(differences)}")
+
     show_img(
         imagem_reconstruida,
         fig_number=11,
         sub_plot_config=(1,1,1),
         plot_title="Imagem Reconstruída"
     )
-    
+
     show_img(
         differences,
         create_colormap((0,0,0), (1,1,1)),
@@ -44,7 +47,7 @@ def MSE(imagem_original: ndarray, imagem_reconstruida: ndarray) -> float:
         sub_plot_config=(1,1,1),
         plot_title="Diferenças Original-Reconstruído"
     )
-    
+
 
     imagem_original = npround(imagem_original).astype(float32)
     

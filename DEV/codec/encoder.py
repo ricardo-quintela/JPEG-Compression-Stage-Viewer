@@ -81,6 +81,9 @@ def encode(image: ndarray, fator_qualidade: int, downsampling: tuple):
     y_quantizated = quantize(y_dct_blocks_8, q_matrix_y, fator_qualidade)
     cb_quantizated = quantize(cb_dct_blocks_8, q_matrix_cbcr, fator_qualidade)
     cr_quantizated = quantize(cr_dct_blocks_8, q_matrix_cbcr, fator_qualidade)
+
+    # primeiro print
+    print(f"YQ {y_quantizated[8:16,8:16]}")
     
     show_img(y_quantizated, map_gr, fig_number=7, name="Canal Y", log_correction=True, sub_plot_config=(2,2,1), plot_title="Quantização 8x8")
     show_img(cb_quantizated, map_gr, fig_number=7, name="Canal Cb", log_correction=True, sub_plot_config=(2,2,2), plot_title="Quantização 8x8")
@@ -94,7 +97,10 @@ def encode(image: ndarray, fator_qualidade: int, downsampling: tuple):
     show_img(y_with_dcpm, map_gr, fig_number=8, name="Canal Y", log_correction=True, sub_plot_config=(2,2,1), plot_title="Codificação DCPM")
     show_img(cb_with_dcpm, map_gr, fig_number=8, name="Canal Cb", log_correction=True, sub_plot_config=(2,2,2), plot_title="Codificação DCPM")
     show_img(cr_with_dcpm, map_gr, fig_number=8, name="Canal Cr", log_correction=True, sub_plot_config=(2,2,3), plot_title="Codificação DCPM")
-        
+
+    # segundo print
+    print(f"Y DCPM {y_with_dcpm[8:16,8:16]}")
+
     show_img(image, fig_number=9, plot_title="Imagem Original", sub_plot_config=(1,1,1))
 
     return y_with_dcpm, cb_with_dcpm, cr_with_dcpm, image.shape[0], image.shape[1]

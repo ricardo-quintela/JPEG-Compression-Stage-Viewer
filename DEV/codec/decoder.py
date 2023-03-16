@@ -37,6 +37,9 @@ def decode(data: Tuple[ndarray, ndarray, ndarray], width: int, height: int, qual
         dpcm_decoder(data[1]),
         dpcm_decoder(data[2])
     )
+
+    # terceiro dcpm
+    print(f"INV Y DCPM {de_dpcm[0][8:16,8:16]}")
     
     de_quantized = (
         inv_quantize(de_dpcm[0], q_matrix_y, quality_factor),
