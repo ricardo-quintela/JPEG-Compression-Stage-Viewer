@@ -94,7 +94,7 @@ def PSNR(MSE_value: float, imagem_original: ndarray) -> float:
     Returns:
         float: rácio entre o quadrado do pico do sinal correcto e o ruído
     """
-    
-    max = npmax(imagem_original.astype(float32)) ** 2
-    
-    return log10(max/MSE_value) * 10
+
+    max_val = npmax(imagem_original.astype(float32)) ** 2
+
+    return log10(max_val/MSE_value) * 10
