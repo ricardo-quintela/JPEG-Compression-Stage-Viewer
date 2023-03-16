@@ -1,11 +1,12 @@
 """Contém funções para aplicar quantização em imagens
 """
 
-from numpy import ndarray, zeros, int16, round as npround
+from numpy import ndarray, zeros, int16, round as npround, ones, uint8, float64
 
 def quantize(
         channel: ndarray,
-        q_matrix: ndarray
+        q_matrix: ndarray,
+        quality_factor: int
 ) -> ndarray:
     """Aplica a técnica de quantização ao canal da imagem
     fornecido
@@ -17,6 +18,7 @@ def quantize(
     Args:
         channel (ndarray): o canal a quantizar
         q_matrix (ndarray): a matriz de quantização a ser usada
+        quality_factor (int): o fator de qualidade das matrizes de quantização
 
     Returns:
         ndarray: o canal da imagem devidamente quantizado
@@ -40,21 +42,40 @@ def quantize(
     # alocar espaço para guardar outras matrizes
     ch_quantized = zeros(channel.shape, dtype=int16)
 
-    # fazer a quantização das matrizes de imagem
+    if quality_factor >= 50:
+        fator_escala = (100 - quality_factor) / 50
+    elif quality_factor < 50 and quality_factor > 0:
+        fator_escala = 50 / quality_factor
+    elif quality_factor == 0:
+        fator_escala = 0
+    else:
+        fator_escala = 0
 
+    if fator_escala != 0:
+        q_matriz_with_factor = npround(fator_escala * q_matrix)
+    else:
+        q_matriz_with_factor = ones(ch_quantized.shape)
+
+    q_matriz_with_factor[q_matriz_with_factor > 255] = 255
+    q_matriz_with_factor[q_matriz_with_factor < 1] = 1
+
+    q_matriz_with_factor = npround(q_matriz_with_factor).astype(uint8)
+
+    # fazer a quantização das matrizes de imagem
     for i in range(0, ch_quantized.shape[0], 8):
         for j in range(0, ch_quantized.shape[1], 8):
             ch_quantized[i:i+8, j:j+8] = npround(
-                channel[i:i+8, j:j+8] / q_matrix
+                channel[i:i+8, j:j+8] / q_matriz_with_factor
             )
-
-    return ch_quantized
+    
+    return ch_quantized.astype(int)
 
 
 
 def inv_quantize(
         ch_quantized: ndarray,
-        q_matrix: ndarray
+        q_matrix: ndarray,
+        quality_factor: int
 ) -> ndarray:
     """Reverte a técnica de quantização aplicada anteriormente
     ao canal da imagem fornecido
@@ -66,6 +87,7 @@ def inv_quantize(
     Args:
         ch_quantized (ndarray): o canal para inverter a quantização
         q_matrix (ndarray): a matriz de quantização a ser usada
+        quality_factor (int): o fator de qualidade da matriz de quatização
 
     Returns:
         ndarray: o canal da imagem devidamente quantizado
@@ -90,9 +112,29 @@ def inv_quantize(
     channel = zeros(ch_quantized.shape, dtype=int16)
 
     # fazer a quantização das matrizes de imagem
+    if quality_factor >= 50:
+        fator_escala = (100 - quality_factor) / 50
+    elif quality_factor < 50 and quality_factor > 0:
+        fator_escala = 50 / quality_factor
+    elif quality_factor == 0:
+        fator_escala = 0
+    else:
+        fator_escala = 0
+    
+    if fator_escala != 0:
+        q_matriz_with_factor = npround(fator_escala * q_matrix)
+    else:
+        q_matriz_with_factor = ones(ch_quantized.shape)
+        
+    q_matriz_with_factor[q_matriz_with_factor > 255] = 255
+    q_matriz_with_factor[q_matriz_with_factor < 1] = 1
+    
+    q_matriz_with_factor = npround(q_matriz_with_factor).astype(uint8)
 
     for i in range(0, channel.shape[0], 8):
         for j in range(0, channel.shape[1], 8):
-            channel[i:i+8, j:j+8] = ch_quantized[i:i+8, j:j+8] * q_matrix
-            
+            channel[i:i+8, j:j+8] = ch_quantized[i:i+8, j:j+8] * q_matriz_with_factor
+    
+    channel = npround(channel).astype(float64)
+                
     return channel

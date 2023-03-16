@@ -21,12 +21,13 @@ from imgtools import calculate_dct
 from imgtools import quantize
 from imgtools import dpcm_encoder
 
-from file_worker import lex, synt, semantic, read_config, load_grammar, load_q_matrix
+from file_worker import read_config, load_grammar, load_q_matrix, semantic, lex, synt
 
 from matplotlib.pyplot import close
 
+from codec import main_codec_function
 
-def main():
+def main(): 
     """Função principal onde todas as outras serão chamadas
     e será tratada a interação com o utilizador
 
@@ -44,7 +45,7 @@ def main():
 
     # fechar todos os plots a correr no backend do matplotlib
     close("all")
-
+    
     # criar um parser de argumentos da consola
     parser = argparse.ArgumentParser()
 
@@ -87,6 +88,14 @@ def main():
         metavar="NAME"
     )
 
+    # encode geral
+    parser.add_argument(
+        "-e", "--encode",
+        help="encode image using JPEG codec and display steps",
+        action="store_true"
+    )
+
+
     # modelos de cor
     color_model_group = parser.add_mutually_exclusive_group()
     color_model_group.add_argument(
@@ -123,8 +132,8 @@ def main():
 
     transformations_group.add_argument(
         "-q", "--quantize",
-        help="quantize the image",
-        action="store_true"
+        help="quantize the image with a defined quality factor [0,100]",
+        type=int
     )
 
     transformations_group.add_argument(
@@ -170,6 +179,21 @@ def main():
             print(
                 f"{basename(__file__)}: error: colormap argument requires the selection of a color channel")
             return
+        
+
+    # utilizar encode geral
+    if args.encode:
+
+        # tratamento de parâmetros em falta
+        if args.image is None or args.quantize is None or args.downsample is None:
+            print(f"{basename(__file__)}: error: an image path, a subsampling rate and a quality factor must be given")
+            return
+
+        main_codec_function(args.image, args.quantize, args.downsample)
+        return
+
+
+
 
     # o utilizador escolhe ver a imagem
     if args.image:
@@ -232,10 +256,14 @@ def main():
                 q_matrix_y = load_q_matrix("q_matrix_y.csv")
                 q_matrix_cbcr = load_q_matrix("q_matrix_cbcr.csv")
 
+                if args.quantize > 100 or args.quantize < 0:
+                    print(f"{basename(__file__)}: error: quality factor must be a percentage value")
+                    return
+
                 channels = (
-                    quantize(channels[0], q_matrix_y),
-                    quantize(channels[1], q_matrix_cbcr),
-                    quantize(channels[2], q_matrix_cbcr)
+                    quantize(channels[0], q_matrix_y, args.quantize),
+                    quantize(channels[1], q_matrix_cbcr, args.quantize),
+                    quantize(channels[2], q_matrix_cbcr, args.quantize)
                 )
 
                 # ocorreu um erro
