@@ -51,7 +51,7 @@ def MSE(imagem_original: ndarray, imagem_reconstruida: ndarray) -> float:
 
     imagem_original = npround(imagem_original).astype(float32)
     
-    return npsum((imagem_original - imagem_reconstruida)**2) / (imagem_original.shape[0]*imagem_original.shape[1])
+    return npsum((imagem_original - imagem_reconstruida.astype(float32))**2) / (imagem_original.shape[0]*imagem_original.shape[1])
 
 def RMSE(MSE_value: float) -> float:
     """Calcula a raíz da diferença média quadrada de entre os píxeis da imagem original
