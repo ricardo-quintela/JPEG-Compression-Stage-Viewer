@@ -1,6 +1,7 @@
 from matplotlib.pyplot import show, close
 
 from numpy import ndarray
+from math import ceil
 
 from imgtools import read_bmp
 from imgtools import separate_channels
@@ -98,8 +99,16 @@ def encode(image: ndarray, fator_qualidade: int, downsampling: tuple):
     show_img(cb_with_dcpm, map_gr, fig_number=8, name="Canal Cb", log_correction=True, sub_plot_config=(2,2,2), plot_title="Codificação DCPM")
     show_img(cr_with_dcpm, map_gr, fig_number=8, name="Canal Cr", log_correction=True, sub_plot_config=(2,2,3), plot_title="Codificação DCPM")
 
+
+
     # segundo print
     print(f"Y DCPM {y_with_dcpm[8:16,8:16]}")
+
+
+    # Taxa de compressao
+    print(f"Taxa de compressão após downsampling {downsampling}: {round((1 - ceil((y_resized.nbytes + cb_resized.nbytes + cr_resized.nbytes) / 1024) / ceil(image.nbytes / 1024)) * 100, 1)}%")
+    print(f"Imagem original: {ceil(image.nbytes / 1024)}KB")
+    print(f"Imagem com 422: {ceil((y_resized.nbytes + cb_resized.nbytes + cr_resized.nbytes) / 1024)}KB")
 
     show_img(image, fig_number=9, plot_title="Imagem Original", sub_plot_config=(1,1,1))
 

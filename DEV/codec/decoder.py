@@ -15,7 +15,7 @@ from imgtools import dpcm_decoder
 from file_worker import load_q_matrix
 
 
-def decode(data: Tuple[ndarray, ndarray, ndarray], width: int, height: int, quality_factor: int) -> ndarray:
+def decode(data: Tuple[ndarray, ndarray, ndarray], width: int, height: int, quality_factor: int, isMetrics: bool = False) -> ndarray:
     """Decodifica a matriz de bytes dada em formato jpeg
     para uma imagem
 
@@ -39,7 +39,8 @@ def decode(data: Tuple[ndarray, ndarray, ndarray], width: int, height: int, qual
     )
 
     # terceiro dcpm
-    print(f"INV Y DCPM {de_dpcm[0][8:16,8:16]}")
+    if isMetrics:
+        print(f"INV Y DCPM {de_dpcm[0][8:16,8:16]}")
     
     de_quantized = (
         inv_quantize(de_dpcm[0], q_matrix_y, quality_factor),

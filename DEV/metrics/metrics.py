@@ -30,6 +30,7 @@ def MSE(imagem_original: ndarray, imagem_reconstruida: ndarray) -> float:
 
     differences = abs(imagem_O[0].astype(float32) - imagem_R[0])
 
+
     # quarto print
     print(f"Média de diferenças: {mean(differences)}")
 

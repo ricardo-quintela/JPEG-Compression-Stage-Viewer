@@ -30,7 +30,8 @@ def main_codec_function(img: str, fator_qualidade: int, downsampling: tuple):
         cr_codificada
     )
 
-    imagem_descodificada = decode(imagem_codificada, comprimento, largura, fator_qualidade)
+    imagem_descodificada = decode(imagem_codificada, comprimento, largura, fator_qualidade, True)
+
 
     MSE_value = MSE(imagem_original, imagem_descodificada)
 

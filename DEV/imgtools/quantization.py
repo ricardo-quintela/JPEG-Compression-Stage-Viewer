@@ -54,7 +54,7 @@ def quantize(
     if fator_escala != 0:
         q_matriz_with_factor = npround(fator_escala * q_matrix)
     else:
-        q_matriz_with_factor = ones(ch_quantized.shape)
+        q_matriz_with_factor = ones(q_matrix.shape, dtype=uint8)
 
     q_matriz_with_factor[q_matriz_with_factor > 255] = 255
     q_matriz_with_factor[q_matriz_with_factor < 1] = 1
@@ -124,7 +124,7 @@ def inv_quantize(
     if fator_escala != 0:
         q_matriz_with_factor = npround(fator_escala * q_matrix)
     else:
-        q_matriz_with_factor = ones(ch_quantized.shape)
+        q_matriz_with_factor = ones(q_matrix.shape)
         
     q_matriz_with_factor[q_matriz_with_factor > 255] = 255
     q_matriz_with_factor[q_matriz_with_factor < 1] = 1
