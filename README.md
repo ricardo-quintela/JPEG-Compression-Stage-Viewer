@@ -38,8 +38,8 @@ Bibliotecas:
 # Modo de uso
 
 ```
-ussage: main.py [-h] (-i PATH | -a PATH) [-c CHANNEL] [-m     ] [-n NAME] [-y | -r] [-p PADDING]
-               [-s  ]
+usage: main.py [-h] (-i PATH | -a PATH) [-c CHANNEL] [-m     ] [-n NAME] [-e] [-y | -r]
+               [-p PADDING] [-s  ] [-d DCT] [-q QUANTIZE] [-f]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -48,6 +48,7 @@ optional arguments:
   -a PATH, --config PATH
                         use a configuration file with commands to run multiple plot instances
   -n NAME, --name NAME  give a name to the plot
+  -e, --encode          encode image using JPEG codec and display steps
   -y, --ycbcr           convert the image channels to the YCbCr color model
   -r, --rgb             convert the image channels to the RGB color model (default)
 
@@ -60,6 +61,11 @@ optional arguments:
                         add padding to the image unitl a certain value
   -s   , --downsample
                         downsample the image by a given set of values {0, 1, 2, 4}
+  -d DCT, --dct DCT     calculate the dct of the image (must be multiples of 8, 0 to apply on
+                        the whole channel)
+  -q QUANTIZE, --quantize QUANTIZE
+                        quantize the image with a defined quality factor [0,100]
+  -f, --dcpm            encode the DC coeficients of the image
 ```
 
 
@@ -91,7 +97,7 @@ end
 
 ```
 
-## Comandos
+## Flags
 
 | Comando | Argumentos                                  | Ação                                                                                                  |
 | ------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -104,7 +110,8 @@ end
 | `-n`    | STRING                                      | Nome do subplot da imagem                                                                             |
 | `-p`    | INT                                         | Adiciona um preenchimento à imagem fornecida                                                          |
 | `-d`    | INT                                         | Calcula a dct em blocos de valor igual ao inteiro fornecido ou na imagem toda caso não seja fornecido |
-| `-q`    |                                             | Quantiza a imagem com as matrizes de quantização                                                      |
+| `-q`    | INT                                         | Quantiza a imagem com as matrizes de quantização                                                      |
 | `-f`    |                                             | Aplica codificação DPCM                                                                               |
+| `-e`    |                                             | Faz a codificação da imagem e apresenta passos intermédios                                            |
 | `plot`  | STRING                                      | Inicia um bloco de código do tipo `plot` com o nome fornecido na `STRING`                             |
 | `end`   |                                             | Termina um bloco de código                                                                            |
