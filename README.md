@@ -1,6 +1,4 @@
-# Trabalho prático 1 de Multimédia
-
-## Compressão de Imagem
+# Visualizador de Etapas de Compressão JPEG
 
 <p align='center'>
   <a href="https://www.python.org/downloads/">
@@ -8,9 +6,28 @@
   </a>&nbsp;&nbsp;
 </p>
 
-Repositório para desenvolvimento e trabalho em grupo  
+Welcome to the repository dedicated to our Multimedia project during our undergraduate studies,
+focusing on the exploration of the JPEG compression method.
+This interactive program provides a detailed view of the codec, allowing users to customize their experience through an intuitive scripting language.
 
-## Conteúdo
+## Key Features:
+
+### Interactivity:
+
+- Explore each phase of the JPEG codec interactively.
+- Instruct the program with a simple scripting language.
+
+### Detailed Visualization:
+
+- Visually observe the impact of each stage on image quality.
+- Combine stages to understand compression decisions.
+
+### Side-by-Side Comparison:
+
+- Compare various stages of the JPEG codec for a comparative analysis.
+- Gain insights into different compression settings.
+
+## Contents
 
 ```
 mult_tp1
@@ -28,14 +45,14 @@ mult_tp1
 └── REQ
 ```
   
-## Requisitos
+## Requirements
 
-[**Python 3.8**](https://www.python.org/downloads/) ou superior
+[**Python 3.8**](https://www.python.org/downloads/) or above
 
-Bibliotecas:  
+Libraries:  
 `python -m pip install -r requirements.txt`
 
-# Modo de uso
+# Usage
 
 ```
 usage: main.py [-h] (-i PATH | -a PATH) [-c CHANNEL] [-m     ] [-n NAME] [-e] [-y | -r]
@@ -69,49 +86,52 @@ optional arguments:
 ```
 
 
-# Ficheiro de configuração
+# Scripting the behaviour of the program
 
-Um ficheiro de configuração tem blocos de comandos que o programa interpreta.  
+A configuration file in a basic scripting language can be used to visualize different steps of the compression
+algorithm side by side.
 
-Exemplo da estrutura de um ficheiro de configuração:
+To use:
+`main.py -a path/to/config_file`
+
+Example of a configuration file structure:
 
 ```
-plot "Canais RGB"
--i "img/barn_mountains.bmp" -m 0 0 0 1 0 0 -c 1 -r -n "Canal R"
--i "img/barn_mountains.bmp" -m 0 0 0 0 1 0 -c 2 -r -n "Canal G"
--i "img/barn_mountains.bmp" -m 0 0 0 0 0 1 -c 3 -r -n "Canal B"
+plot "RGB Channels"
+-i "img/barn_mountains.bmp" -m 0 0 0 1 0 0 -c 1 -r -n "R Channel"
+-i "img/barn_mountains.bmp" -m 0 0 0 0 1 0 -c 2 -r -n "G Channel"
+-i "img/barn_mountains.bmp" -m 0 0 0 0 0 1 -c 3 -r -n "B Channel"
 end
-plot "Canais YCbCr"
--i "img/barn_mountains.bmp" -m 0 0 0 1 1 1 -c 1 -y -p 32 -n "Canal Y"
--i "img/barn_mountains.bmp" -m 0 0 0 1 1 1 -c 2 -y -p 32 -n "Canal Cb"
--i "img/barn_mountains.bmp" -m 0 0 0 1 1 1 -c 3 -y -p 32 -n "Canal Cr"
+plot "YCbCr Channels"
+-i "img/barn_mountains.bmp" -m 0 0 0 1 1 1 -c 1 -y -p 32 -n "Y Channel"
+-i "img/barn_mountains.bmp" -m 0 0 0 1 1 1 -c 2 -y -p 32 -n "Cb Channel"
+-i "img/barn_mountains.bmp" -m 0 0 0 1 1 1 -c 3 -y -p 32 -n "Cr Channel"
 end
-plot "Canais YCbCr com Downsampling 422"
--i "img/barn_mountains.bmp" -m 0 0 0 1 1 1 -c 1 -y -s 4 2 2 -p 32 -n "Canal Y"
--i "img/barn_mountains.bmp" -m 0 0 0 1 1 1 -c 2 -y -s 4 2 2 -p 32 -n "Canal Cb"
--i "img/barn_mountains.bmp" -m 0 0 0 1 1 1 -c 3 -y -s 4 2 2 -p 32 -n "Canal Cr"
+plot "YCbCr Channels whith 422 Downsampling"
+-i "img/barn_mountains.bmp" -m 0 0 0 1 1 1 -c 1 -y -s 4 2 2 -p 32 -n "Y Channel"
+-i "img/barn_mountains.bmp" -m 0 0 0 1 1 1 -c 2 -y -s 4 2 2 -p 32 -n "Cb Channel"
+-i "img/barn_mountains.bmp" -m 0 0 0 1 1 1 -c 3 -y -s 4 2 2 -p 32 -n "Cr Channel"
 end
 plot Original
 -i "img/barn_mountains.bmp"
 end
-
 ```
 
 ## Flags
 
-| Comando | Argumentos                                  | Ação                                                                                                  |
-| ------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `-i`    | PATH                                        | Seleciona uma ficheiro de imagem para utilizar                                                        |
-| `-m`    | FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT \[0,1\] | Cria um mapa de cor para utilizar na visualização da imagem                                           |
-| `-c`    | INT {1,2,3}                                 | Seleciona um dos canais da imagem                                                                     |
-| `-y`    |                                             | Seleciona o modo de cor YcbCr                                                                         |
-| `-r`    |                                             | Seleciona o modo de cor RGB                                                                           |
-| `-s`    | INT INT INT {0,1,2,4}                       | Faz a subamostragem dos canais da imagem segundo uma configuração                                     |
-| `-n`    | STRING                                      | Nome do subplot da imagem                                                                             |
-| `-p`    | INT                                         | Adiciona um preenchimento à imagem fornecida                                                          |
-| `-d`    | INT                                         | Calcula a dct em blocos de valor igual ao inteiro fornecido ou na imagem toda caso não seja fornecido |
-| `-q`    | INT                                         | Quantiza a imagem com as matrizes de quantização                                                      |
-| `-f`    |                                             | Aplica codificação DPCM                                                                               |
-| `-e`    |                                             | Faz a codificação da imagem e apresenta passos intermédios                                            |
-| `plot`  | STRING                                      | Inicia um bloco de código do tipo `plot` com o nome fornecido na `STRING`                             |
-| `end`   |                                             | Termina um bloco de código                                                                            |
+| Command | Arguments                                  | Action                                                                                                 |
+| ------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `-i`    | PATH                                        | Selects an image file to use                                                                         |
+| `-m`    | FLOAT FLOAT FLOAT FLOAT FLOAT FLOAT \[0,1\] | Creates a color map for image visualization                                                          |
+| `-c`    | INT {1,2,3}                                 | Selects one of the image channels                                                                    |
+| `-y`    |                                             | Selects YcbCr color mode                                                                            |
+| `-r`    |                                             | Selects RGB color mode                                                                              |
+| `-s`    | INT INT INT {0,1,2,4}                       | Subsamples image channels according to a configuration                                               |
+| `-n`    | STRING                                      | Name of the image subplot                                                                           |
+| `-p`    | INT                                         | Adds padding to the provided image                                                                  |
+| `-d`    | INT                                         | Performs DCT on blocks of the given size or on the entire image if not provided                      |
+| `-q`    | INT                                         | Quantizes the image using quantization matrices                                                      |
+| `-f`    |                                             | Applies DPCM encoding                                                                              |
+| `-e`    |                                             | Encodes the image and displays intermediate steps                                                   |
+| `plot`  | STRING                                      | Initiates a `plot` code block with the provided name in `STRING`                                      |
+| `end`   |                                             | Ends a code block                                                                                   |
