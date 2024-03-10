@@ -1,4 +1,4 @@
-# Visualizador de Etapas de Compressão JPEG
+# JPEG Compression Stage Viewer
 
 <p align='center'>
   <a href="https://www.python.org/downloads/">
