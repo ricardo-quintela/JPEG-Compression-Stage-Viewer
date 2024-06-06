@@ -27,6 +27,17 @@ This interactive program provides a detailed view of the codec, allowing users t
 - Compare various stages of the JPEG codec for a comparative analysis.
 - Gain insights into different compression settings.
 
+---
+
+<p align='center'>
+      <img src="PM/img/DCT_8x8.png" width='400' height='400'/>
+      <img src="PM/img/rgb_channels.png"  width='400' height='400'/>
+      <img src="PM/img/YCbCr_quantized.png"  width='400' height='400'/>
+      <img src="PM/img/downsampling.png"  width='400' height='400'/>
+</p>
+
+---
+
 ## Contents
 
 ```
